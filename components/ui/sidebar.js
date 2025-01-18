@@ -26,7 +26,7 @@ export default function Sidebar({ results = [] }) {
     return [
       {
         title: "Sample Result 1",
-        description: "A short description.",
+        description: "A short description.A short description.A short description.A short description.",
         longitude: -130,
         latitude: 49,
         date: "2024-01-01",
@@ -40,6 +40,7 @@ export default function Sidebar({ results = [] }) {
         date: "2025-05-10",
         // no image => tests placeholder
       },
+      
     ]
   }, [search])
 

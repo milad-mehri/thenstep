@@ -16,7 +16,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png"
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
-  iconUrl: "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
   shadowUrl: markerShadow.src,
 
   iconSize: [40, 65],
@@ -47,11 +47,11 @@ function FlyToUserLocationButton() {
       onClick={handleFlyToLocation}
       style={{
         position: "absolute",
-        top: "10px",
-        left: "10px",
+        bottom: "10px",
+        right: "10px",
         zIndex: 1000,
         padding: "10px",
-        backgroundColor: "#007bff",
+        backgroundColor: "#27272a",
         color: "white",
         border: "none",
         borderRadius: "5px",
@@ -106,7 +106,7 @@ export default function Map() {
             {/* optional Popup, if you want */}
           </Marker>
         )}
-
+  
         <FlyToUserLocationButton />
 
         {/* Render a Marker for each search result, showing a popup on hover */}
