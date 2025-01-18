@@ -1,29 +1,31 @@
-// components/ui/map.jsx
 "use client"
 
 import React, { useEffect, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
+
 import { useAppStore } from "@/lib/store"
 
-// (1) Import default Leaflet icons and override
+// We still import Leaflet's marker icons for the shadow image
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
 import markerIcon from "leaflet/dist/images/marker-icon.png"
 import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
+// 1) Override Leaflet's default icon, using your custom iconUrl
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
   iconUrl: "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
   shadowUrl: markerShadow.src,
+
   iconSize: [40, 65],
   iconAnchor: [20, 65],
   popupAnchor: [0, -60],
   shadowSize: [65, 65],
 })
 
-// A simple button to geolocate user, then pan the map to them
+// A button to fly to user location
 function FlyToUserLocationButton() {
   const map = useMap()
 
@@ -68,6 +70,7 @@ export default function Map() {
   // Debug: see what searchResults we have
   console.log("searchResults from store:", searchResults)
 
+  // Fetch user location once
   useEffect(() => {
     if (!hasFetchedLocation) {
       navigator.geolocation.getCurrentPosition(
@@ -87,7 +90,7 @@ export default function Map() {
   return (
     <div className="relative h-full w-full">
       <MapContainer
-        center={[49, -125]} // Zoomed out to see results around -130 to -123
+        center={[49, -125]}
         zoom={6}
         scrollWheelZoom
         className="h-full w-full z-0"
@@ -97,16 +100,16 @@ export default function Map() {
           attribution="&copy; OpenStreetMap contributors"
         />
 
-        {/* User's current location marker (if available) */}
+        {/* If userLocation is found, show a Marker for it (also uses the custom icon) */}
         {userLocation && (
           <Marker position={userLocation}>
-            {/* Optional popup for user location */}
+            {/* optional Popup, if you want */}
           </Marker>
         )}
 
         <FlyToUserLocationButton />
 
-        {/* For each search result, create a Marker with optional Popup */}
+        {/* Render a Marker for each search result, showing a popup on hover */}
         {searchResults.map((res, i) => {
           if (
             typeof res.latitude === "number" &&
@@ -116,10 +119,20 @@ export default function Map() {
               <Marker
                 key={i}
                 position={[res.latitude, res.longitude]}
+                // 2) Add eventHandlers for hover
+                eventHandlers={{
+                  mouseover: (e) => {
+                    e.target.openPopup()
+                  },
+                  mouseout: (e) => {
+                    e.target.closePopup()
+                  },
+                }}
               >
+                {/* 3) Show the result details in a Popup */}
                 <Popup>
-                  <h3 className="font-semibold">{res.title || "No Title"}</h3>
-                  <p>{res.description || "No Description"}</p>
+                  <h3 className="font-semibold">{res.title || "Untitled"}</h3>
+                  <p>{res.description || "No description."}</p>
                 </Popup>
               </Marker>
             )
