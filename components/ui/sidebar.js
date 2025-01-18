@@ -30,7 +30,7 @@ export default function Sidebar({ results = [] }) {
         longitude: -130,
         latitude: 49,
         date: "2024-01-01",
-        image: "https://via.placeholder.com/300x200/ccc/fff?text=Result+1",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
       },
       {
         title: "Sample Result 2",
@@ -38,7 +38,7 @@ export default function Sidebar({ results = [] }) {
         longitude: -123.12,
         latitude: 49.28,
         date: "2025-05-10",
-        // no image => tests placeholder
+        image: "https://static.scientificamerican.com/sciam/cache/file/C2015DC2-3B05-4B02-B37E1DFB642662F4_source.jpg",
       },
     ]
   }, [search])
