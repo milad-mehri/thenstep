@@ -2,13 +2,28 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { useAppStore } from "@/lib/store"
-import Pin from "./pin"
 
+// (1) Import default Leaflet icons and override
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x.src,
+  iconUrl: "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+  shadowUrl: markerShadow.src,
+  iconSize: [40, 65],
+  iconAnchor: [20, 65],
+  popupAnchor: [0, -60],
+  shadowSize: [65, 65],
+})
+
+// A simple button to geolocate user, then pan the map to them
 function FlyToUserLocationButton() {
   const map = useMap()
 
@@ -50,7 +65,7 @@ export default function Map() {
   const { userLocation, setUserLocation, searchResults } = useAppStore()
   const [hasFetchedLocation, setHasFetchedLocation] = useState(false)
 
-  // Debug: check if we actually have searchResults
+  // Debug: see what searchResults we have
   console.log("searchResults from store:", searchResults)
 
   useEffect(() => {
@@ -72,8 +87,7 @@ export default function Map() {
   return (
     <div className="relative h-full w-full">
       <MapContainer
-        // Zoom out more so you can see if pins are ~7 degrees away from center
-        center={[49, -125]}
+        center={[49, -125]} // Zoomed out to see results around -130 to -123
         zoom={6}
         scrollWheelZoom
         className="h-full w-full z-0"
@@ -83,30 +97,31 @@ export default function Map() {
           attribution="&copy; OpenStreetMap contributors"
         />
 
-        {/* Marker for user location */}
+        {/* User's current location marker (if available) */}
         {userLocation && (
           <Marker position={userLocation}>
-            {/* optional Popup */}
+            {/* Optional popup for user location */}
           </Marker>
         )}
 
         <FlyToUserLocationButton />
 
-        {/* Render each search result as a pin */}
+        {/* For each search result, create a Marker with optional Popup */}
         {searchResults.map((res, i) => {
-          // only render if lat/long exist
           if (
             typeof res.latitude === "number" &&
             typeof res.longitude === "number"
           ) {
             return (
-              <Pin
+              <Marker
                 key={i}
-                lat={res.latitude}
-                lng={res.longitude}
-                title={res.title}
-                description={res.description}
-              />
+                position={[res.latitude, res.longitude]}
+              >
+                <Popup>
+                  <h3 className="font-semibold">{res.title || "No Title"}</h3>
+                  <p>{res.description || "No Description"}</p>
+                </Popup>
+              </Marker>
             )
           }
           return null
