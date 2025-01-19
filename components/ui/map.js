@@ -17,6 +17,8 @@ import { fetchORSRoute } from "@/lib/ors";
 // Leaflet default marker icons
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
+import { Crosshair } from "lucide-react"; // Ensure Crosshair is imported
+
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Override Leaflet's default icon
@@ -59,15 +61,16 @@ function FlyToUserLocationButton() {
   };
 
   return (
-    <button
+    <Crosshair
+      size={40}
       onClick={handleFlyToLocation}
+      className="bg-blue-500"
       style={{
         position: "absolute",
         bottom: "10px",
         right: "10px",
         zIndex: 1000,
         padding: "10px",
-        backgroundColor: "#27272a",
         color: "white",
         border: "none",
         borderRadius: "5px",
@@ -75,7 +78,7 @@ function FlyToUserLocationButton() {
       }}
     >
       Fly to My Location
-    </button>
+    </Crosshair>
   );
 }
 
