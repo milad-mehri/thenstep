@@ -86,30 +86,7 @@ export default function Home() {
   }
 
   function handleSearchSubmit() {
-<<<<<<< Updated upstream
     if (!searchTerm.trim()) return;
-=======
-    if (!search.trim()) return;
-
-    console.log("User searched:", search);
-
-    // Example: store some mock results in your global store
-    setSearchResults([
-      {
-        title: `Results for "${search}"`,
-        description: "Some dummy data.",
-        latitude: 49.28,
-        longitude: -123.12,
-        date: "2025-05-10",
-        image:
-          "https://static.scientificamerican.com/sciam/cache/file/C2015DC2-3B05-4B02-B37E1DFB642662F4_source.jpg",
-        type: "place",
-      },
-      // You can add more mock results here if needed
-    ]);
-
-    // Hide the center bar and show the sidebar
->>>>>>> Stashed changes
     setHasSearched(true);
   }
 
