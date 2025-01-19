@@ -4,25 +4,30 @@
 import React, { useMemo, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
 import Result from "@/components/ui/result";
+import { fetchORSRoute } from "@/lib/ors";
 
 export default function Sidebar() {
-  const { searchTerm, setSearchResults } = useAppStore();
+  const {
+    searchTerm,
+    setSearchResults,
+    setRouteGeometry,
+    userLocation,
+    setSelectedResult,
+  } = useAppStore();
 
-  // Filter or fetch logic based on searchTerm
+  // Example mock data for results
   const filteredResults = useMemo(() => {
     if (!searchTerm) return [];
-    // Example mock data
     return [
-        {
-            title: "Sample Result 1",
-            description: "A short description for result 1",
-            longitude: -130,
-            latitude: 49,
-            date: "2024-01-01",
-            image:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
-          },
-          
+      {
+        title: "Sample Result 1",
+        description: "A short description for result 1",
+        longitude: -130,
+        latitude: 49,
+        date: "2024-01-01",
+        image:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
+      },
       {
         title: `Found something for "${searchTerm}"`,
         description: "Sidebar-based result.",
@@ -40,6 +45,25 @@ export default function Sidebar() {
     setSearchResults(filteredResults);
   }, [filteredResults, setSearchResults]);
 
+  // Handle result selection and fetch route
+  const handleResultClick = async (result) => {
+    setSelectedResult(result);
+
+    if (userLocation) {
+      try {
+        const route = await fetchORSRoute([
+          [userLocation.lat, userLocation.lng], // Start from user location
+          [result.latitude, result.longitude], // Destination
+        ]);
+        setRouteGeometry(route);
+      } catch (error) {
+        console.error("Error fetching route:", error);
+      }
+    } else {
+      console.error("User location not available.");
+    }
+  };
+
   return (
     <div className="p-4 no-scrollbar overflow-y-auto h-full">
       <h2 className="text-xl font-semibold mb-4">Results</h2>
@@ -53,15 +77,20 @@ export default function Sidebar() {
       ) : (
         <div className="flex flex-col gap-4">
           {filteredResults.map((res, i) => (
-            <Result
+            <div
               key={i}
-              title={res.title}
-              description={res.description}
-              longitude={res.longitude}
-              latitude={res.latitude}
-              date={res.date}
-              image={res.image}
-            />
+              className="cursor-pointer"
+              onClick={() => handleResultClick(res)}
+            >
+              <Result
+                title={res.title}
+                description={res.description}
+                longitude={res.longitude}
+                latitude={res.latitude}
+                date={res.date}
+                image={res.image}
+              />
+            </div>
           ))}
         </div>
       )}
