@@ -1,60 +1,75 @@
 // components/ui/sidebar.js
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/lib/store";
 import Result from "@/components/ui/result";
 import { fetchORSRoute } from "@/lib/ors";
 
-export default function Sidebar({closeSidebar}) {
-
+export default function Sidebar({ closeSidebar }) {
   const {
     searchTerm,
     setSearchResults,
     setRouteGeometry,
     userLocation,
     setSelectedResult,
-    setRouteDetails
+    setRouteDetails,
   } = useAppStore();
 
-  // Example mock data for results
-  const filteredResults = useMemo(() => {
-    if (!searchTerm) return [];
-    return [
-      {
-        title: "Sample Result 1",
-        description: "A short description for result 1",
-        longitude: -123.12,
-        latitude: 60.28,
+  const [places, setPlaces] = useState([]);
+  const [webResults, setWebResults] = useState(null);
 
-        date: "2024-01-01",
-        image:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
-      },
-      {
-        title: `Found something for "${searchTerm}"`,
-        description: "Sidebar-based result.",
-        longitude: -123.12,
-        latitude: 49.28,
-        date: "2025-05-10",
-        image:
-          "https://static.scientificamerican.com/sciam/cache/file/C2015DC2-3B05-4B02-B37E1DFB642662F4_source.jpg",
-      },
-    ];
-  }, [searchTerm]);
+  // Fetch results explicitly when the user submits a search
+  const fetchResults = async () => {
+    if (!searchTerm.trim()) {
+      console.log("Search term is empty, skipping fetch.");
+      return;
+    }
+    if (!userLocation) {
+      console.error("User location not available, cannot proceed with fetch.");
+      return;
+    }
 
-  useEffect(() => {
-    console.log("Filtered results (Sidebar):", filteredResults);
-    setSearchResults(filteredResults);
-  }, [filteredResults, setSearchResults]);
+    const userLocationQuery =""// `The current location of the user is: ${userLocation.lng}, ${userLocation.lat}`;
+    console.log(`Fetching results for searchTerm: "${searchTerm}" with userLocation: ${userLocationQuery}`);
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/search?q=${encodeURIComponent(
+          searchTerm
+        )}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch results. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Fetched data:", data);
+
+      const validPlaces = (data.places || []).filter(
+        (place) => place.lat !== undefined && place.lng !== undefined
+      );
+  
+      setPlaces(validPlaces);
+      setWebResults(data.webresults || {});
+      setSearchResults(validPlaces);
+
+      console.log("Places:", data.places || []);
+      console.log("WebResults:", data.webresults || {});
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  };
 
   // Handle result selection and fetch route
   const handleResultClick = async (result) => {
+    console.log("Result clicked:", result);
     setSelectedResult(result);
-  
+
     if (userLocation) {
       try {
-        // Example route details
+        console.log("Fetching route details...");
         const details = [
           {
             mode: "Walking",
@@ -67,9 +82,7 @@ export default function Sidebar({closeSidebar}) {
           {
             mode: "Jogging",
             time: "10 mins",
-            benefits: [
-              { label: "Exercise", icon: "exercise" },
-            ],
+            benefits: [{ label: "Exercise", icon: "exercise" }],
           },
           {
             mode: "Biking",
@@ -82,27 +95,34 @@ export default function Sidebar({closeSidebar}) {
           {
             mode: "Scenic Path",
             time: "20 mins",
-            benefits: [
-              { label: "Scenic Beauty", icon: "scenic" },
-            ],
+            benefits: [{ label: "Scenic Beauty", icon: "scenic" }],
           },
         ];
-  
+
         setRouteDetails(details);
-  
+        console.log("Route details set:", details);
+
         // Fetch and display the route geometry
         const route = await fetchORSRoute([
-          [userLocation.lat, userLocation.lng], // Start
-          [result.latitude, result.longitude], // Destination
+          [userLocation.lat, userLocation.lng],
+          [result.lat, result.lng],
         ]);
         setRouteGeometry(route);
+        console.log("Route geometry set:", route);
       } catch (error) {
         console.error("Error fetching route:", error);
       }
     } else {
-      console.error("User location not available.");
+      console.error("User location not available, cannot fetch route.");
     }
   };
+
+  // Fetch results when the component renders if there's a valid searchTerm
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      fetchResults();
+    }
+  }, [searchTerm]);
 
   return (
     <div className="p-4 no-scrollbar overflow-y-auto h-full">
@@ -117,31 +137,76 @@ export default function Sidebar({closeSidebar}) {
           <span className="text-lg font-bold">&times;</span>
         </button>
       </div>
+
       {searchTerm.length === 0 ? (
         <p className="text-sm text-gray-500">No search yet.</p>
-      ) : filteredResults.length === 0 ? (
-        <p className="text-sm text-gray-500">
-          No results for &quot;{searchTerm}&quot;.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {filteredResults.map((res, i) => (
-            <div
-              key={i}
-              className="cursor-pointer"
-              onClick={() => handleResultClick(res)}
-            >
-              <Result
-                title={res.title}
-                description={res.description}
-                longitude={res.longitude}
-                latitude={res.latitude}
-                date={res.date}
-                image={res.image}
-              />
+      ) : webResults && Object.keys(webResults).length > 0 ? (
+        <>
+          {/* Display events first */}
+          {webResults.events && webResults.events.length > 0 && (
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold">Events</h3>
+              <div className="flex flex-col gap-4">
+                {webResults.events.map((event, i) => (
+                  <div
+                    key={`event-${i}`}
+                    className="cursor-pointer"
+                    onClick={() => handleResultClick(event)}
+                  >
+                    <Result
+                      title={event.name}
+                      description={event.address}
+                      latitude={event.lat}
+                      longitude={event.lng}
+                      date={event.time}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+
+          {/* Display landmarks */}
+          {webResults.landmarks && webResults.landmarks.length > 0 && (
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold">Landmarks</h3>
+              <div className="flex flex-col gap-4">
+                {webResults.landmarks.map((landmark, i) => (
+                  <div
+                    key={`landmark-${i}`}
+                    className="cursor-pointer"
+                    onClick={() => handleResultClick(landmark)}
+                  >
+                    <Result
+                      title={landmark.name}
+                      description={`${landmark.address}, ${landmark.state}, ${landmark.country}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        /* Display places if webResults is empty */
+        <>
+          <h3 className="text-lg font-semibold mb-2">Places</h3>
+          <div className="flex flex-col gap-4">
+            {places.map((place, i) => (
+              <div
+                key={`place-${i}`}
+                className="cursor-pointer"
+                onClick={() => handleResultClick(place)}
+              >
+                <Result
+                  title={place.description}
+                  latitude={place.lat}
+                  longitude={place.lng}
+                />
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
