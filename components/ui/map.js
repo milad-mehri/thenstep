@@ -217,14 +217,14 @@ export default function Map() {
 
         {/* Render the route as a polyline */}
         {routeGeometry.length > 1 && (
-          <>
-            <Polyline
-              pathOptions={{ color: "blue", weight: 4 }}
-              positions={routeGeometry}
-            />
-            <FitToRoute route={routeGeometry} />
-          </>
-        )}
+  <>
+    <Polyline
+      pathOptions={{ color: "blue", weight: 4 }}
+      positions={routeGeometry}
+    />
+    <FitToRoute route={routeGeometry} />
+  </>
+)}
       </MapContainer>
     </div>
   );

@@ -25,7 +25,7 @@ const MapNoSSR = dynamic(() => import("@/components/ui/map"), {
 export default function Home() {
   const {
       userLocation,
-      setSearchResults,
+      setSearchResults,routes
     } = useAppStore();
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -195,6 +195,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-    </main>
+      <RouteDetailsSidebar />    </main>
   );
 }

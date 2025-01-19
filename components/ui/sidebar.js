@@ -20,11 +20,12 @@ export default function Sidebar({
     userLocation,
     setSelectedResult,
     setRouteDetails,
+    routes,
+    setRoutes
   } = useAppStore();
-  const [routes, setRoutes] = useState(null);
+  // const [routes, setRoutes] = useState(null);
   const [places, setPlaces] = useState([]);
   const [events, setEvents] = useState([]);
-  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     if (search_obj) {
@@ -34,24 +35,21 @@ export default function Sidebar({
   }, [search_obj]);
 
   const handleClick = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      closeSidebar();
-    }, 300); // Match the duration of the CSS transition
+    closeSidebar();
   };
 
   return (
-    <div className={`p-4 no-scrollbar overflow-y-auto h-full transition-transform duration-300 ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}>
+    <div className="p-4 no-scrollbar overflow-y-auto h-full">
       {/* Header with Close Button */}
       <div className=" p-2 items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Results</h2>
-        <button
+        {/* <button
           onClick={handleClick}
           className="text-gray-500 hover:text-gray-700"
           aria-label="Close sidebar"
         >
           <span className="text-lg font-bold">&times;</span>
-        </button>
+        </button> */}
       </div>
 
       {/* Display loading skeleton */}
@@ -105,13 +103,16 @@ export default function Sidebar({
                       console.log("Checkpoint Data:", checkpointData);
 
                       // Step 2: Get routes using getRoutes
-                      const routes = await getRoutes({
+                      const routess = await getRoutes({
                         start: [userLat, userLng],
                         end: [placeLat, placeLng],
                         safety: checkpointData.safety,
                         scenic: checkpointData.scenic,
                       });
                       console.log("Routes:", routes);
+                      setRoutes({
+                        routes,
+                      });
 
                       // Optional: Update store or state with routes
                       setSelectedResult({
@@ -153,7 +154,6 @@ export default function Sidebar({
           </div>
         </>
       )}
-      {routes && <RouteDetailsSidebar routes={routes} />}
     </div>
   );
 }
