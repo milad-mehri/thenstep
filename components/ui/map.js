@@ -28,6 +28,8 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
   iconUrl:
     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
+  iconUrl:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
   shadowUrl: markerShadow.src,
 
   iconSize: [40, 65],
@@ -35,10 +37,9 @@ L.Icon.Default.mergeOptions({
   popupAnchor: [0, -60],
   shadowSize: [65, 65],
 });
+});
 
-// ---------------------------------
-// 2) Custom icon for the user's current location only
-// ---------------------------------
+// 2) Custom icon for the user's current location
 const userLocationIcon = L.icon({
   iconUrl:
     "https://cdn3.iconfinder.com/data/icons/maps-and-navigation-7/65/68-512.png",
@@ -46,11 +47,11 @@ const userLocationIcon = L.icon({
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
 });
+});
 
-// ---------------------------------
-// 3) A button to fly to user location
-// ---------------------------------
+// A button to fly to the user's location
 function FlyToUserLocationButton() {
+  const map = useMap();
   const map = useMap();
 
   const handleFlyToLocation = () => {
@@ -61,9 +62,12 @@ function FlyToUserLocationButton() {
         },
         (error) => console.error("Error retrieving location:", error)
       );
+      );
     } else {
       alert("Geolocation is not supported by your browser.");
+      alert("Geolocation is not supported by your browser.");
     }
+  };
   };
 
   return (
@@ -85,11 +89,10 @@ function FlyToUserLocationButton() {
       Fly to My Location
     </button>
   );
+  );
 }
 
-// ---------------------------------
-// 4) A small helper component to handle clicks on the map
-// ---------------------------------
+// 3) A small helper component to handle map clicks
 function AddPinOnClick({ onPinAdd }) {
   useMapEvents({
     click(e) {
@@ -99,11 +102,10 @@ function AddPinOnClick({ onPinAdd }) {
     },
   });
   return null;
+  });
+  return null;
 }
 
-// ---------------------------------
-// 5) Main Map Component
-// ---------------------------------
 export default function Map() {
   const { routeGeometry, setRouteGeometry, selectedResult } = useAppStore(); // ADDED: selectedResult, setRouteGeometry
   const { userLocation, setUserLocation, searchResults } = useAppStore();
@@ -125,9 +127,12 @@ export default function Map() {
             lng: pos.coords.longitude,
           });
           setHasFetchedLocation(true);
+          });
+          setHasFetchedLocation(true);
         },
         (err) => console.error("Error fetching location:", err),
         { enableHighAccuracy: true }
+      );
       );
     }
   }, [hasFetchedLocation, setUserLocation]);
@@ -149,13 +154,13 @@ export default function Map() {
         scrollWheelZoom
         className="h-full w-full z-0"
       >
-        {/* Base layer */}
+        {/* Base Tile Layer */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
 
-        {/* If userLocation is found, show a Marker for it with a custom icon */}
+        {/* Show user location if available, with a custom icon */}
         {userLocation && (
           <Marker position={userLocation} icon={userLocationIcon}>
             <Popup>
@@ -164,10 +169,10 @@ export default function Map() {
           </Marker>
         )}
 
-        {/* A button to fly to the user's location */}
+        {/* Button to fly to user location */}
         <FlyToUserLocationButton />
 
-        {/* Render markers for each search result, with a hover popup */}
+        {/* Render markers for each search result (from global store) */}
         {searchResults.map((res, i) => {
           if (
             typeof res.latitude === "number" &&
@@ -188,11 +193,13 @@ export default function Map() {
                 </Popup>
               </Marker>
             );
+            );
           }
+          return null;
           return null;
         })}
 
-        {/* Detect map clicks, store single pin location in state */}
+        {/* Listen for clicks => place a single pinned location */}
         <AddPinOnClick
           onPinAdd={(newPin) => {
             setClickedPin(newPin); // Overwrites any existing pin
@@ -200,7 +207,7 @@ export default function Map() {
           }}
         />
 
-        {/* Render the single clicked pin, if any */}
+        {/* Render the single user-clicked pin, if any */}
         {clickedPin && (
           <Marker position={[clickedPin.lat, clickedPin.lng]}>
             <Popup>
@@ -220,5 +227,6 @@ export default function Map() {
         )}
       </MapContainer>
     </div>
+  );
   );
 }

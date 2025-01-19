@@ -1,12 +1,11 @@
+// components/ui/sidebar.js
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-// Replace with your actual imports for Input, Label, Result, and icons:
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Result from "@/components/ui/result";
-
-// Example icon imports (from Lucide). You can use any icon library or custom SVG.
+import { useAppStore } from "@/lib/store";
 import {
   Utensils,
   Hotel,
@@ -16,9 +15,6 @@ import {
   Stethoscope,
   DollarSign,
 } from "lucide-react";
-
-// If using Zustand or a global store:
-import { useAppStore } from "@/lib/store";
 
 export default function Sidebar() {
   const [search, setSearch] = useState("");
@@ -31,13 +27,10 @@ export default function Sidebar() {
     searchResults,
   } = useAppStore();
 
-  // Update local `search` state whenever the user types.
   const handleChange = (event) => {
     setSearch(event.target.value);
   };
 
-  // Example categories array (Google Maps–style).
-  // On click, we can setSearch(...) or do something else.
   const categories = [
     { label: "Restaurants", icon: <Utensils className="h-4 w-4" /> },
     { label: "Hotels", icon: <Hotel className="h-4 w-4" /> },
@@ -48,13 +41,11 @@ export default function Sidebar() {
     { label: "ATMs", icon: <DollarSign className="h-4 w-4" /> },
   ];
 
-  // For demonstration, we do a simple "mock" filter of results
-  // if `search` is not empty. In a real app, you'd fetch or filter actual data.
+  // Example: some mock filter logic
   const filteredResults = useMemo(() => {
     if (!search) return [];
-    // Hard-coded sample data:
     return [
-      {
+        {
         title: "Sample Result 1",
         description: "A short description for result 1",
         longitude: -130,
@@ -89,9 +80,8 @@ export default function Sidebar() {
     ];
   }, [search]);
 
-  // Whenever filteredResults changes, log them and store in global store
   useEffect(() => {
-    console.log("Filtered results:", filteredResults);
+    console.log("Filtered results (Sidebar):", filteredResults);
     setSearchResults(filteredResults);
   }, [filteredResults, setSearchResults]);
 
@@ -105,20 +95,20 @@ export default function Sidebar() {
 
   return (
     <div className="p-4">
-      {/* Search Label & Input */}
+      {/* The sidebar's own search bar */}
       <div className="mb-4">
         <Label htmlFor="search" className="mb-2">
-          Search
+          Refine Search
         </Label>
         <Input
           id="search"
           value={search}
           onChange={handleChange}
-          placeholder="Search something..."
+          placeholder="Type to refine..."
         />
       </div>
 
-      {/* Category Buttons: shaped like pills, with icons & text */}
+      {/* Category Buttons */}
       <div className="no-scrollbar flex gap-2 mb-4 overflow-x-auto whitespace-nowrap">
         {categories.map((cat) => (
           <button
@@ -127,7 +117,7 @@ export default function Sidebar() {
                        bg-white border border-gray-300 
                        rounded-full text-gray-600 shadow-sm 
                        hover:bg-gray-50"
-            onClick={() => setSearch(cat.label)} // Or do any custom action
+            onClick={() => setSearch(cat.label)}
           >
             {cat.icon}
             <span className="text-sm">{cat.label}</span>
@@ -135,13 +125,13 @@ export default function Sidebar() {
         ))}
       </div>
 
-      {/* Display results based on 'search' */}
+      {/* Results */}
       <div className="flex flex-col gap-4">
         {search.length === 0 ? (
-          <p className="text-sm text-gray-500">No search yet.</p>
+          <p className="text-sm text-gray-500">No sidebar search yet.</p>
         ) : filteredResults.length === 0 ? (
           <p className="text-sm text-gray-500">
-            No results found for &quot;{search}&quot;.
+            No results for &quot;{search}&quot;.
           </p>
         ) : (
           filteredResults.map((res, i) => (
