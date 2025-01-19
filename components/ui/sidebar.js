@@ -5,7 +5,15 @@ import { useAppStore } from "@/lib/store";
 import Result from "@/components/ui/result";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Sidebar({ closeSidebar, search_obj, coords, isLoading }) {
+import fetchCheckpointData from "@/lib/fetchCheckpoint";
+import getRoutes from "@/lib/getRoutes";
+
+export default function Sidebar({
+  closeSidebar,
+  search_obj,
+  coords,
+  isLoading,
+}) {
   const {
     setSearchResults,
     setRouteGeometry,
@@ -68,7 +76,41 @@ export default function Sidebar({ closeSidebar, search_obj, coords, isLoading })
           <div className="text-black">
             {places.length > 0 ? (
               places.map((place, index) => (
-                <Result key={index} title={place.name} description={place.desc} latitude={coords.places[index].lat} longitude={coords.places[index].lng} date={place.address}/>
+                // <Result key={index} title={place.name} description={place.desc} latitude={coords.places[index].lat} longitude={coords.places[index].lng} date={place.address}/>
+<Result
+  key={index}
+  title={place.name}
+  description={place.desc}
+  latitude={coords.places[index].lat}
+  longitude={coords.places[index].lng}
+  date={place.address}
+  onClick={async () => {
+    try {
+      const userLat = userLocation?.lat;
+      const userLng = userLocation?.lng;
+      const placeLat = coords.places[index].lat;
+      const placeLng = coords.places[index].lng;
+
+      // Step 1: Fetch checkpoint data
+      const checkpointData = await fetchCheckpointData(userLat, userLng, placeLat, placeLng);
+      console.log("Checkpoint Data:", checkpointData);
+
+      // Step 2: Get routes using getRoutes
+      const routes = await getRoutes({
+        start: [userLat, userLng],
+        end: [placeLat, placeLng],
+        safety: checkpointData.safety,
+        scenic: checkpointData.scenic,
+      });
+      console.log("Routes:", routes);
+
+      // Optional: Update store or state with routes
+      setSelectedResult({ type: "route", geometry: routes.directRoute.geometry });
+    } catch (error) {
+      console.error("Error handling location selection:", error);
+    }
+  }}
+/>
               ))
             ) : (
               <p className="text-black">No places found</p>
