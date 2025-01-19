@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { useAppStore } from "@/lib/store";
 import Sidebar from "@/components/ui/sidebar";
 
-// Lucide icons for categories
+// Lucide icons
 import {
   Utensils,
   Hotel,
@@ -39,7 +39,6 @@ export default function Home() {
   const [promptIndex, setPromptIndex] = useState(0);
 
   useEffect(() => {
-    // Cycle placeholder every 3s
     const interval = setInterval(() => {
       setPromptIndex((prev) => (prev + 1) % prompts.length);
     }, 3000);
@@ -61,11 +60,13 @@ export default function Home() {
     setSearchTerm(e.target.value);
   }
 
+  // If user picks a category => set searchTerm and do an immediate "search"
   function handleCategoryClick(catLabel) {
     setSearchTerm(catLabel);
+    setHasSearched(true); // instantly show sidebar
   }
 
-  // Pressing search => show sidebar
+  // Pressing the "Search" button => show sidebar if user typed something
   function handleSearchSubmit() {
     if (!searchTerm.trim()) return;
     setHasSearched(true);
@@ -83,7 +84,7 @@ export default function Home() {
       {/* Map in the background */}
       <MapNoSSR />
 
-      {/* Floating sidebar with smaller width, margins, and rounding */}
+      {/* Floating sidebar (only after searching) */}
       {hasSearched && (
         <aside
           className="
@@ -94,9 +95,9 @@ export default function Home() {
             bg-white 
             border border-gray-200 
             z-10 
-            overflow-y-auto 
-            rounded-lg 
+            rounded-lg
             shadow-md
+            no-scrollbar overflow-hidden
           "
         >
           <Sidebar />
@@ -141,7 +142,7 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Category icons, smaller, allow wrapping */}
+        {/* Category icons => instantly show sidebar + set search */}
         <div className="mt-4 flex gap-2 flex-wrap justify-center max-w-xl">
           {categories.map((cat) => (
             <button

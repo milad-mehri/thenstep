@@ -8,11 +8,21 @@ import Result from "@/components/ui/result";
 export default function Sidebar() {
   const { searchTerm, setSearchResults } = useAppStore();
 
-  // Some mock filter logic (or real fetch) based on searchTerm
+  // Filter or fetch logic based on searchTerm
   const filteredResults = useMemo(() => {
     if (!searchTerm) return [];
     // Example mock data
     return [
+        {
+            title: "Sample Result 1",
+            description: "A short description for result 1",
+            longitude: -130,
+            latitude: 49,
+            date: "2024-01-01",
+            image:
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
+          },
+          
       {
         title: `Found something for "${searchTerm}"`,
         description: "Sidebar-based result.",
@@ -25,14 +35,13 @@ export default function Sidebar() {
     ];
   }, [searchTerm]);
 
-  // Whenever the filtered results change, store them globally
   useEffect(() => {
     console.log("Filtered results (Sidebar):", filteredResults);
     setSearchResults(filteredResults);
   }, [filteredResults, setSearchResults]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 no-scrollbar overflow-y-auto h-full">
       <h2 className="text-xl font-semibold mb-4">Results</h2>
 
       {searchTerm.length === 0 ? (
