@@ -171,7 +171,7 @@ export default function Map() {
         <FlyToUserLocationButton />
 
         {/* Search result markers */}
-        {searchResults.coords.places.map((res, i) => (
+        {searchResults?.coords?.places.map((res, i) => (
           <Marker
             key={i}
             position={[res.lat, res.lng]}
