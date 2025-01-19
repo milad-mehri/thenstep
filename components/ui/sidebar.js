@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/lib/store";
 import Result from "@/components/ui/result";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import RouteDetailsSidebar from "@/components/ui/RouteDetailsSidebar";
 import fetchCheckpointData from "@/lib/fetchCheckpoint";
 import getRoutes from "@/lib/getRoutes";
 
@@ -21,7 +21,7 @@ export default function Sidebar({
     setSelectedResult,
     setRouteDetails,
   } = useAppStore();
-
+  const [routes, setRoutes] = useState(null);
   const [places, setPlaces] = useState([]);
   const [events, setEvents] = useState([]);
 
@@ -77,40 +77,58 @@ export default function Sidebar({
             {places.length > 0 ? (
               places.map((place, index) => (
                 // <Result key={index} title={place.name} description={place.desc} latitude={coords.places[index].lat} longitude={coords.places[index].lng} date={place.address}/>
-<Result
-  key={index}
-  title={place.name}
-  description={place.desc}
-  latitude={coords.places[index].lat}
-  longitude={coords.places[index].lng}
-  date={place.address}
-  onClick={async () => {
-    try {
-      const userLat = userLocation?.lat;
-      const userLng = userLocation?.lng;
-      const placeLat = coords.places[index].lat;
-      const placeLng = coords.places[index].lng;
+                <Result
+                  key={index}
+                  title={place.name}
+                  description={place.desc}
+                  latitude={coords.places[index].lat}
+                  longitude={coords.places[index].lng}
+                  date={place.address}
+                  onClick={async () => {
+                    try {
+                      const userLat = userLocation?.lat;
+                      const userLng = userLocation?.lng;
+                      const placeLat = coords.places[index].lat;
+                      const placeLng = coords.places[index].lng;
 
-      // Step 1: Fetch checkpoint data
-      const checkpointData = await fetchCheckpointData(userLat, userLng, placeLat, placeLng);
-      console.log("Checkpoint Data:", checkpointData);
+                      // Step 1: Fetch checkpoint data
+                      const checkpointData = await fetchCheckpointData(
+                        userLat,
+                        userLng,
+                        placeLat,
+                        placeLng
+                      );
+                      console.log("Checkpoint Data:", checkpointData);
 
-      // Step 2: Get routes using getRoutes
-      const routes = await getRoutes({
-        start: [userLat, userLng],
-        end: [placeLat, placeLng],
-        safety: checkpointData.safety,
-        scenic: checkpointData.scenic,
-      });
-      console.log("Routes:", routes);
+                      // Step 2: Get routes using getRoutes
+                      const routes = await getRoutes({
+                        start: [userLat, userLng],
+                        end: [placeLat, placeLng],
+                        safety: checkpointData.safety,
+                        scenic: checkpointData.scenic,
+                      });
+                      console.log("Routes:", routes);
 
-      // Optional: Update store or state with routes
-      setSelectedResult({ type: "route", geometry: routes.directRoute.geometry });
-    } catch (error) {
-      console.error("Error handling location selection:", error);
-    }
-  }}
-/>
+                      // Optional: Update store or state with routes
+                      setSelectedResult({
+                        title: place.name,
+                        description: place.desc,
+                        type: "route",
+                      });
+
+                      setRoutes({
+                        directRoute: routes.directRoute,
+                        scenicRoute: routes.scenicRoute,
+                        safetyRoute: routes.safetyRoute,
+                      });
+                    } catch (error) {
+                      console.error(
+                        "Error handling location selection:",
+                        error
+                      );
+                    }
+                  }}
+                />
               ))
             ) : (
               <p className="text-black">No places found</p>
@@ -131,6 +149,7 @@ export default function Sidebar({
           </div>
         </>
       )}
+      {routes && <RouteDetailsSidebar routes={routes} />}
     </div>
   );
 }
