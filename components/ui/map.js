@@ -61,7 +61,6 @@ function FlyToUserLocationButton() {
   };
 
   return (
-
     //Created the Button to be a crosshair
     <Crosshair
       size={40}
@@ -158,6 +157,11 @@ export default function Map() {
           attribution="&copy; OpenStreetMap contributors"
         />
 
+        <TileLayer
+          url="https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors, CC-BY-SA"
+        />
+
         {/* User location */}
         {userLocation && (
           <Marker position={userLocation} icon={userLocationIcon}>
@@ -181,11 +185,35 @@ export default function Map() {
             }}
           >
             <Popup>
-              <h3 className="font-semibold">{res.title || "Untitled"}</h3>
-              <p>{res.description || "No description."}</p>
+              <h3 className="font-semibold">
+                {searchResults?.eng?.places[i]?.name || "Untitled"}
+              </h3>
+              <p>{searchResults?.eng?.places[i]?.desc || "No description."}</p>
             </Popup>
           </Marker>
         ))}
+
+        {/* Search result markers */}
+        {searchResults.is_general &&
+          searchResults?.coords?.events.map((res, i) => (
+            <Marker
+              key={i}
+              position={[res.lat, res.lng]}
+              eventHandlers={{
+                mouseover: (e) => e.target.openPopup(),
+                mouseout: (e) => e.target.closePopup(),
+              }}
+            >
+              <Popup>
+                <h3 className="font-semibold">
+                  {searchResults?.eng?.events[i]?.name || "Untitled"}
+                </h3>
+                <p>
+                  {searchResults?.eng?.events[i]?.desc || "No description."}
+                </p>
+              </Popup>
+            </Marker>
+          ))}
 
         {/* Render the route as a polyline */}
         {routeGeometry.length > 1 && (

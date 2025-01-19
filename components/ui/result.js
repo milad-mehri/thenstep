@@ -18,12 +18,12 @@ export default function Result({
   const { setRouteGeometry } = useAppStore()
 
   return (
-    <div className="border rounded-md p-4" {...props}>
-      <img
+    <div className="border rounded-md p-4 my-3" {...props}>
+      {/* <img
         src={placeholder}
         alt={title}
         className="w-full h-auto mb-2 rounded-md object-cover"
-      />
+      /> */}
       <h2 className="text-lg font-semibold">{title}</h2>
       <p className="text-sm text-gray-700">{description}</p>
 
