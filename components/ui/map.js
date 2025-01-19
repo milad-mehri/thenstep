@@ -28,15 +28,12 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
   iconUrl:
     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
-  iconUrl:
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
   shadowUrl: markerShadow.src,
 
   iconSize: [40, 65],
   iconAnchor: [20, 65],
   popupAnchor: [0, -60],
   shadowSize: [65, 65],
-});
 });
 
 // 2) Custom icon for the user's current location
@@ -47,11 +44,9 @@ const userLocationIcon = L.icon({
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
 });
-});
 
 // A button to fly to the user's location
 function FlyToUserLocationButton() {
-  const map = useMap();
   const map = useMap();
 
   const handleFlyToLocation = () => {
@@ -62,12 +57,9 @@ function FlyToUserLocationButton() {
         },
         (error) => console.error("Error retrieving location:", error)
       );
-      );
     } else {
       alert("Geolocation is not supported by your browser.");
-      alert("Geolocation is not supported by your browser.");
     }
-  };
   };
 
   return (
@@ -89,7 +81,6 @@ function FlyToUserLocationButton() {
       Fly to My Location
     </button>
   );
-  );
 }
 
 // 3) A small helper component to handle map clicks
@@ -100,8 +91,6 @@ function AddPinOnClick({ onPinAdd }) {
       // Pass new lat/lng to the parent via callback
       onPinAdd({ lat, lng });
     },
-  });
-  return null;
   });
   return null;
 }
@@ -127,12 +116,9 @@ export default function Map() {
             lng: pos.coords.longitude,
           });
           setHasFetchedLocation(true);
-          });
-          setHasFetchedLocation(true);
         },
         (err) => console.error("Error fetching location:", err),
         { enableHighAccuracy: true }
-      );
       );
     }
   }, [hasFetchedLocation, setUserLocation]);
@@ -193,9 +179,7 @@ export default function Map() {
                 </Popup>
               </Marker>
             );
-            );
           }
-          return null;
           return null;
         })}
 
@@ -218,6 +202,7 @@ export default function Map() {
             </Popup>
           </Marker>
         )}
+
         {console.log("Route geometry:", routeGeometry)}
         {routeGeometry.length > 1 && (
           <Polyline
@@ -227,6 +212,5 @@ export default function Map() {
         )}
       </MapContainer>
     </div>
-  );
   );
 }
