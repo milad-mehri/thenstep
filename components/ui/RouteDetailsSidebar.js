@@ -2,9 +2,10 @@
 
 import React from "react";
 import { useAppStore } from "@/lib/store";
+import polyline from "@mapbox/polyline";
 
 export default function RouteDetailsSidebar() {
-  const { routes, setRouteGeometry, selectedResult } = useAppStore(); // Access routes, selected result, and geometry setter
+  const { routes, setRouteGeometry, selectedResult } = useAppStore();
 
   if (!selectedResult || !routes) {
     return (
@@ -17,14 +18,21 @@ export default function RouteDetailsSidebar() {
     );
   }
 
-  // Handle missing route types gracefully
-  const scenicRoute = routes.scenicRoute || { time: "N/A", geometry: null };
-  const safetyRoute = routes.safetyRoute || { time: "N/A", geometry: null };
-  const directRoute = routes.directRoute || { time: "N/A", geometry: null };
+  // Extract routes
+  const { directRoute, scenicRoute, safetyRoute } = routes;
+
+  // Function to decode and set geometry
+  const handleRouteSelection = (route) => {
+    if (!route?.geometry) {
+      console.warn("No geometry available for the selected route.");
+      return;
+    }
+    const decodedGeometry = polyline.decode(route.geometry); // Decode polyline
+    setRouteGeometry(decodedGeometry); // Update the map with the decoded route
+  };
 
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white border-l border-gray-200 z-50 shadow-lg overflow-y-auto">
-      {JSON.stringify(routes)}
       <h2 className="text-xl font-semibold p-4 border-b border-gray-300">
         Routes to {selectedResult.title}
       </h2>
@@ -34,40 +42,40 @@ export default function RouteDetailsSidebar() {
         {/* Scenic Route */}
         <button
           className={`w-full p-3 text-center font-semibold rounded-lg shadow transition ${
-            scenicRoute.geometry
+            scenicRoute?.geometry
               ? "bg-green-500 text-white hover:bg-green-600"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
-          onClick={() => scenicRoute.geometry && setRouteGeometry(scenicRoute.geometry)}
-          disabled={!scenicRoute.geometry}
+          onClick={() => handleRouteSelection(scenicRoute)}
+          disabled={!scenicRoute?.geometry}
         >
-          Scenic Route (Estimated Time: {scenicRoute.time} mins)
+          Scenic Route (Estimated Time: {scenicRoute?.time || "N/A"} mins)
         </button>
 
         {/* Safety Route */}
         <button
           className={`w-full p-3 text-center font-semibold rounded-lg shadow transition ${
-            safetyRoute.geometry
+            safetyRoute?.geometry
               ? "bg-yellow-500 text-white hover:bg-yellow-600"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
-          onClick={() => safetyRoute.geometry && setRouteGeometry(safetyRoute.geometry)}
-          disabled={!safetyRoute.geometry}
+          onClick={() => handleRouteSelection(safetyRoute)}
+          disabled={!safetyRoute?.geometry}
         >
-          Safety Route (Estimated Time: {safetyRoute.time} mins)
+          Safety Route (Estimated Time: {safetyRoute?.time || "N/A"} mins)
         </button>
 
         {/* Direct Route */}
         <button
           className={`w-full p-3 text-center font-semibold rounded-lg shadow transition ${
-            directRoute.geometry
+            directRoute?.geometry
               ? "bg-blue-500 text-white hover:bg-blue-600"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
-          onClick={() => directRoute.geometry && setRouteGeometry(directRoute.geometry)}
-          disabled={!directRoute.geometry}
+          onClick={() => handleRouteSelection(directRoute)}
+          disabled={!directRoute?.geometry}
         >
-          Direct Route (Estimated Time: {directRoute.time} mins)
+          Direct Route (Estimated Time: {directRoute?.time || "N/A"} mins)
         </button>
       </div>
     </div>

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mapbox/polyline": "^1.2.1",
     "@radix-ui/react-slot": "^1.1.1",
     "autoprefixer": "^10.4.20",
     "bun": "^1.1.45",
