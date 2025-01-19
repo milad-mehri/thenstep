@@ -62,41 +62,38 @@ export default function Sidebar({
                       const userLng = userLocation?.lng;
                       const placeLat = coords.places[index].lat;
                       const placeLng = coords.places[index].lng;
-
-                      // Fetch checkpoint data
+                  
                       const checkpointData = await fetchCheckpointData(
                         userLat,
                         userLng,
                         placeLat,
                         placeLng
                       );
-
-                      // Get routes
+                  
                       const fetchedRoutes = await getRoutes({
                         start: [userLat, userLng],
                         end: [placeLat, placeLng],
                         safety: checkpointData.safety,
                         scenic: checkpointData.scenic,
                       });
-
-                      // Update routes in the store
+                  
                       setRoutes({
                         directRoute: fetchedRoutes.directRoute,
                         scenicRoute: fetchedRoutes.scenicRoute,
                         safetyRoute: fetchedRoutes.safetyRoute,
                       });
-
-                      // Update selected result
+                  
                       setSelectedResult({
                         title: place.name,
                         description: place.desc,
                         type: "route",
+                        geometry: fetchedRoutes.directRoute.geometry, // Default to direct route geometry
                       });
                     } catch (error) {
                       console.error("Error handling location selection:", error);
                     }
                   }}
-                />
+                                  />
               ))
             ) : (
               <p className="text-black">No places found</p>

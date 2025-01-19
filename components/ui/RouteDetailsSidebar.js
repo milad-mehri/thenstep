@@ -27,10 +27,9 @@ export default function RouteDetailsSidebar() {
       console.warn("No geometry available for the selected route.");
       return;
     }
-    const decodedGeometry = polyline.decode(route.geometry); // Decode polyline
-    setRouteGeometry(decodedGeometry); // Update the map with the decoded route
+    setRouteGeometry(route.geometry); // Geometry is already decoded
   };
-
+  
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white border-l border-gray-200 z-50 shadow-lg overflow-y-auto">
       <h2 className="text-xl font-semibold p-4 border-b border-gray-300">
