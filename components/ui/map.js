@@ -1,60 +1,70 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet"
-import L from "leaflet"
-import "leaflet/dist/leaflet.css"
+import React, { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+  Polyline, // NEW: import Polyline
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/lib/store";
 
 // We still import Leaflet's marker icons for the shadow image
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
-import markerIcon from "leaflet/dist/images/marker-icon.png"
-import markerShadow from "leaflet/dist/images/marker-shadow.png"
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // ---------------------------------
 // 1) Override Leaflet's default icon for general markers (e.g. search results)
 // ---------------------------------
-delete L.Icon.Default.prototype._getIconUrl
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
-  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
+  iconUrl:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
   shadowUrl: markerShadow.src,
 
   iconSize: [40, 65],
   iconAnchor: [20, 65],
   popupAnchor: [0, -60],
   shadowSize: [65, 65],
-})
+});
 
 // ---------------------------------
 // 2) Custom icon for the user's current location only
 // ---------------------------------
 const userLocationIcon = L.icon({
-  iconUrl: "https://cdn3.iconfinder.com/data/icons/maps-and-navigation-7/65/68-512.png", 
+  iconUrl:
+    "https://cdn3.iconfinder.com/data/icons/maps-and-navigation-7/65/68-512.png",
   iconSize: [35, 35],
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
-})
+});
 
 // ---------------------------------
 // 3) A button to fly to user location
 // ---------------------------------
 function FlyToUserLocationButton() {
-  const map = useMap()
+  const map = useMap();
 
   const handleFlyToLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          map.flyTo([coords.latitude, coords.longitude], 13, { duration: 2 })
+          map.flyTo([coords.latitude, coords.longitude], 18, { duration: 2 });
         },
         (error) => console.error("Error retrieving location:", error)
-      )
+      );
     } else {
-      alert("Geolocation is not supported by your browser.")
+      alert("Geolocation is not supported by your browser.");
     }
-  }
+  };
 
   return (
     <button
@@ -74,7 +84,7 @@ function FlyToUserLocationButton() {
     >
       Fly to My Location
     </button>
-  )
+  );
 }
 
 // ---------------------------------
@@ -83,26 +93,27 @@ function FlyToUserLocationButton() {
 function AddPinOnClick({ onPinAdd }) {
   useMapEvents({
     click(e) {
-      const { lat, lng } = e.latlng
+      const { lat, lng } = e.latlng;
       // Pass new lat/lng to the parent via callback
-      onPinAdd({ lat, lng })
+      onPinAdd({ lat, lng });
     },
-  })
-  return null
+  });
+  return null;
 }
 
 // ---------------------------------
 // 5) Main Map Component
 // ---------------------------------
 export default function Map() {
-  const { userLocation, setUserLocation, searchResults } = useAppStore()
-  const [hasFetchedLocation, setHasFetchedLocation] = useState(false)
+  const { routeGeometry, setRouteGeometry, selectedResult } = useAppStore(); // ADDED: selectedResult, setRouteGeometry
+  const { userLocation, setUserLocation, searchResults } = useAppStore();
+  const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
 
   // We store only one clicked pin in state
-  const [clickedPin, setClickedPin] = useState(null)
+  const [clickedPin, setClickedPin] = useState(null);
 
   // Debug: see what searchResults we have
-  console.log("searchResults from store:", searchResults)
+  console.log("searchResults from store:", searchResults);
 
   // Fetch user location once
   useEffect(() => {
@@ -112,20 +123,29 @@ export default function Map() {
           setUserLocation({
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
-          })
-          setHasFetchedLocation(true)
+          });
+          setHasFetchedLocation(true);
         },
         (err) => console.error("Error fetching location:", err),
         { enableHighAccuracy: true }
-      )
+      );
     }
-  }, [hasFetchedLocation, setUserLocation])
+  }, [hasFetchedLocation, setUserLocation]);
+
+  // NEW: Whenever selectedResult changes, if it's a route, set route geometry
+  useEffect(() => {
+    if (selectedResult && selectedResult.type === "route" && selectedResult.geometry) {
+      setRouteGeometry(selectedResult.geometry);
+    } else {
+      setRouteGeometry([]);
+    }
+  }, [selectedResult, setRouteGeometry]);
 
   return (
     <div className="relative h-full w-full">
       <MapContainer
         center={[49, -125]}
-        zoom={6}
+        zoom={10}
         scrollWheelZoom
         className="h-full w-full z-0"
       >
@@ -167,16 +187,16 @@ export default function Map() {
                   <p>{res.description || "No description."}</p>
                 </Popup>
               </Marker>
-            )
+            );
           }
-          return null
+          return null;
         })}
 
         {/* Detect map clicks, store single pin location in state */}
         <AddPinOnClick
           onPinAdd={(newPin) => {
-            setClickedPin(newPin) // Overwrites any existing pin
-            console.log("Pin dropped at:", newPin)
+            setClickedPin(newPin); // Overwrites any existing pin
+            console.log("Pin dropped at:", newPin);
           }}
         />
 
@@ -191,7 +211,14 @@ export default function Map() {
             </Popup>
           </Marker>
         )}
+        {console.log("Route geometry:", routeGeometry)}
+        {routeGeometry.length > 1 && (
+          <Polyline
+            pathOptions={{ color: "blue", weight: 4 }}
+            positions={routeGeometry}
+          />
+        )}
       </MapContainer>
     </div>
-  )
+  );
 }

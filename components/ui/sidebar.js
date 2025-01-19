@@ -23,9 +23,13 @@ import { useAppStore } from "@/lib/store";
 export default function Sidebar() {
   const [search, setSearch] = useState("");
 
-  // For demonstration, we store results in the global store
-  // so the map can read them and place markers.
-  const { setSearchResults } = useAppStore();
+  // NEW: Grab selectedResult & setter from the store so we can highlight the chosen item
+  const {
+    setSearchResults,
+    selectedResult,
+    setSelectedResult,
+    searchResults,
+  } = useAppStore();
 
   // Update local `search` state whenever the user types.
   const handleChange = (event) => {
@@ -58,15 +62,29 @@ export default function Sidebar() {
         date: "2024-01-01",
         image:
           "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
+        type: "place",
       },
       {
-        title: "Sample Result 2",
-        description: "Another sample result 2",
-        longitude: -123.12,
-        latitude: 49.28,
-        date: "2025-05-10",
+        title: "UBC Rec Center → UBC Hospital (Walking)",
+        description: "A route from UBC Rec to UBC Hospital via walkway",
+        longitude: -123.245905, // Approx location of Rec Center
+        latitude: 49.266757,
+        date: "2026-01-01",
         image:
-          "https://static.scientificamerican.com/sciam/cache/file/C2015DC2-3B05-4B02-B37E1DFB642662F4_source.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/UNIVERSITY_OF_BRITISH_COLUMBIA_LOGO.png/600px-UNIVERSITY_OF_BRITISH_COLUMBIA_LOGO.png",
+        type: "route",
+        // Approx path: from rec center to hospital on foot
+        geometry: [
+            [49.26665, -123.24554], // UBC Rec Center (start)
+            [49.26662, -123.24535],
+            [49.26641, -123.24527],
+            [49.26604, -123.24526],
+            [49.26574, -123.24527],
+            [49.26561, -123.24517],
+            [49.26531, -123.24514],
+            [49.26494, -123.24505],
+            [49.26479, -123.24502],
+        ],
       },
     ];
   }, [search]);
@@ -76,6 +94,14 @@ export default function Sidebar() {
     console.log("Filtered results:", filteredResults);
     setSearchResults(filteredResults);
   }, [filteredResults, setSearchResults]);
+
+  // NEW: By default, if there's at least 1 result and we have no selectedResult yet,
+  // select the first result automatically.
+  useEffect(() => {
+    if (filteredResults.length > 0 && !selectedResult) {
+      setSelectedResult(filteredResults[0]);
+    }
+  }, [filteredResults, selectedResult, setSelectedResult]);
 
   return (
     <div className="p-4">
@@ -119,15 +145,24 @@ export default function Sidebar() {
           </p>
         ) : (
           filteredResults.map((res, i) => (
-            <Result
+            <div
               key={i}
-              title={res.title}
-              description={res.description}
-              longitude={res.longitude}
-              latitude={res.latitude}
-              date={res.date}
-              image={res.image}
-            />
+              // NEW: if this result is selected, add a gray background
+              className={`${
+                selectedResult === res ? "bg-gray-200" : ""
+              } rounded-md p-2 cursor-pointer`}
+              // NEW: onClick sets the selectedResult to this item
+              onClick={() => setSelectedResult(res)}
+            >
+              <Result
+                title={res.title}
+                description={res.description}
+                longitude={res.longitude}
+                latitude={res.latitude}
+                date={res.date}
+                image={res.image}
+              />
+            </div>
           ))
         )}
       </div>
