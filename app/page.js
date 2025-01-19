@@ -1,12 +1,9 @@
-// app/page.js
 "use client";
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useAppStore } from "@/lib/store";
 import Sidebar from "@/components/ui/sidebar";
-
-// Lucide icons
 import {
   Utensils,
   Hotel,
@@ -28,7 +25,7 @@ export default function Home() {
   // Global store searchTerm
   const { searchTerm, setSearchTerm } = useAppStore();
 
-  // Rotating placeholder prompts
+  // Prompts for placeholder text
   const prompts = [
     "I want to visit...",
     "Show me Japanese restaurants",
@@ -36,14 +33,37 @@ export default function Home() {
     "Find the best coffee shops nearby",
     "Best scenic hiking trails",
   ];
+
+  // Which prompt we're on
   const [promptIndex, setPromptIndex] = useState(0);
+  // Which character we are on in the current prompt
+  const [charIndex, setCharIndex] = useState(0);
+
+  // Grab the current prompt
+  const currentPrompt = prompts[promptIndex];
+  // The "typed" portion of the current prompt
+  const typedText = currentPrompt.slice(0, charIndex);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPromptIndex((prev) => (prev + 1) % prompts.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [prompts.length]);
+    // If we've typed the entire current prompt, wait a bit, then go to the next prompt
+    if (charIndex === currentPrompt.length) {
+      const waitingTime = 1500; // 1.5s pause before moving to the next
+      const timeoutId = setTimeout(() => {
+        // Move to the next prompt
+        setPromptIndex((prev) => (prev + 1) % prompts.length);
+        setCharIndex(0); // reset char index for the new prompt
+      }, waitingTime);
+      return () => clearTimeout(timeoutId);
+    }
+
+    // Otherwise, keep typing
+    const typingSpeed = 100; // ms per character
+    const timeoutId = setTimeout(() => {
+      setCharIndex((prev) => prev + 1);
+    }, typingSpeed);
+
+    return () => clearTimeout(timeoutId);
+  }, [charIndex, currentPrompt, prompts.length]);
 
   // Category icons
   const categories = [
@@ -60,19 +80,16 @@ export default function Home() {
     setSearchTerm(e.target.value);
   }
 
-  // If user picks a category => set searchTerm and do an immediate "search"
   function handleCategoryClick(catLabel) {
     setSearchTerm(catLabel);
-    setHasSearched(true); // instantly show sidebar
+    setHasSearched(true);
   }
 
-  // Pressing the "Search" button => show sidebar if user typed something
   function handleSearchSubmit() {
     if (!searchTerm.trim()) return;
     setHasSearched(true);
   }
 
-  // Pressing Enter
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       handleSearchSubmit();
@@ -130,7 +147,7 @@ export default function Home() {
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             className="flex-1 outline-none"
-            placeholder={prompts[promptIndex]}
+            placeholder={typedText}
           />
 
           {/* Search button */}
