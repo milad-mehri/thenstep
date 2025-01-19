@@ -10,10 +10,7 @@ import {
   Polyline,
   useMap,
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
   useMapEvents,
-=======
->>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 } from "react-leaflet";
@@ -23,10 +20,6 @@ import { useAppStore } from "@/lib/store";
 import { fetchORSRoute } from "@/lib/ors"; // Update the import path accordingly
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-// Leaflet default marker icons
->>>>>>> Stashed changes
 =======
 // Leaflet default marker icons
 >>>>>>> Stashed changes
@@ -35,11 +28,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
 // Override default for search results
-=======
-// Override Leaflet's default icon
->>>>>>> Stashed changes
 =======
 // Override Leaflet's default icon
 >>>>>>> Stashed changes
@@ -56,11 +45,7 @@ L.Icon.Default.mergeOptions({
 });
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
 // Custom icon for user location
-=======
-// Custom icon for user's current location
->>>>>>> Stashed changes
 =======
 // Custom icon for user's current location
 >>>>>>> Stashed changes
@@ -73,11 +58,7 @@ const userLocationIcon = L.icon({
 });
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
 // Button to fly to user location
-=======
-// Button to fly to the user's location
->>>>>>> Stashed changes
 =======
 // Button to fly to the user's location
 >>>>>>> Stashed changes
@@ -119,7 +100,6 @@ function FlyToUserLocationButton() {
 }
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
 function AddPinOnClick({ onPinAdd }) {
   useMapEvents({
     click(e) {
@@ -128,8 +108,6 @@ function AddPinOnClick({ onPinAdd }) {
     },
   });
 =======
-=======
->>>>>>> Stashed changes
 // Fit the map to the route
 function FitToRoute({ route }) {
   const map = useMap();
@@ -141,9 +119,6 @@ function FitToRoute({ route }) {
     }
   }, [route, map]);
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
 >>>>>>> Stashed changes
   return null;
 }
@@ -151,24 +126,10 @@ function FitToRoute({ route }) {
 // Main Map Component
 export default function Map() {
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const { userLocation, setUserLocation, searchResults } = useAppStore();
   const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
   const [clickedPin, setClickedPin] = useState(null);
 
-=======
-  const {
-    routeGeometry,
-    setRouteGeometry,
-    selectedResult,
-    userLocation,
-    setUserLocation,
-    searchResults,
-  } = useAppStore();
-  const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
-
-  // Fetch user's location on mount
->>>>>>> Stashed changes
 =======
   const {
     routeGeometry,
@@ -199,33 +160,11 @@ export default function Map() {
   }, [hasFetchedLocation, setUserLocation]);
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
   return (
     <div className="relative h-full w-full">
       <MapContainer
         center={[49, -125]}
         zoom={6}
-=======
-  // Fetch route from ORS API whenever the selected result changes
-
-  useEffect(() => {
-    if (selectedResult && selectedResult.type === "route" && selectedResult.geometry) {
-      console.log("Selected result geometry:", selectedResult.geometry); // Debug log
-  
-      fetchORSRoute(selectedResult.geometry)
-        .then((route) => setRouteGeometry(route))
-        .catch((error) => console.error("Error fetching ORS route:", error));
-    } else {
-      setRouteGeometry([]);
-    }
-  }, [selectedResult, setRouteGeometry]);
-    
-  return (
-    <div className="relative h-full w-full">
-      <MapContainer
-        center={[49.266757, -123.245905]} // UBC Rec Center
-        zoom={15}
->>>>>>> Stashed changes
 =======
   // Fetch route from ORS API whenever the selected result changes
 
@@ -257,10 +196,6 @@ export default function Map() {
         />
 
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-        {/* User location */}
->>>>>>> Stashed changes
 =======
         {/* User location */}
 >>>>>>> Stashed changes
@@ -272,7 +207,6 @@ export default function Map() {
           </Marker>
         )}
 
-<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         <FlyToUserLocationButton />
 
@@ -312,11 +246,6 @@ export default function Map() {
         {/* Fly-to-location button */}
         <FlyToUserLocationButton />
 
-=======
-        {/* Fly-to-location button */}
-        <FlyToUserLocationButton />
-
->>>>>>> Stashed changes
         {/* Search result markers */}
         {searchResults.map((res, i) => (
           <Marker
@@ -327,9 +256,6 @@ export default function Map() {
               mouseout: (e) => e.target.closePopup(),
             }}
           >
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
 >>>>>>> Stashed changes
             <Popup>
               <h3 className="font-semibold">{res.title || "Untitled"}</h3>
@@ -337,10 +263,7 @@ export default function Map() {
             </Popup>
           </Marker>
 <<<<<<< Updated upstream
-<<<<<<< Updated upstream
 =======
-=======
->>>>>>> Stashed changes
         ))}
 
         {/* Render the route as a polyline */}
@@ -352,9 +275,6 @@ export default function Map() {
             />
             <FitToRoute route={routeGeometry} />
           </>
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
 >>>>>>> Stashed changes
         )}
       </MapContainer>
