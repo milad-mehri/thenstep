@@ -103,7 +103,7 @@ export default function Home() {
   return (
     <main className="relative w-screen h-screen overflow-hidden">
       {/* Map in the background */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0" id="map">
         <MapNoSSR />
       </div>
 
