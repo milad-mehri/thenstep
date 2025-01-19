@@ -35,14 +35,6 @@ const steps = [
         showSkip: true,
       },
       {
-        title: "Sidebar",
-        content: "The sidebar shows your search results and details.",
-        selector: "#sidebar", // Highlights the sidebar
-        side: "right",
-        showControls: true,
-        showSkip: true,
-      },
-      {
         title: "Map",
         content: "To nagivate",
         selector: "#map", // Highlights the sidebar
