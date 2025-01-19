@@ -79,11 +79,14 @@ export default function Home() {
   }
 
   // Start the NextStepJS tour on load
+
+  //this will start the tour
   useEffect(() => {
     startNextStep("mainTour");
   }, [startNextStep]);
 
   // Typing effect for placeholder prompts
+
   useEffect(() => {
     if (charIndex === currentPrompt.length) {
       const timeout = setTimeout(() => {
@@ -111,23 +114,24 @@ export default function Home() {
       {hasSearched && (
         <aside
           id="sidebar"
-          className="absolute top-5 left-5 h-[calc(100%-2.5rem)] w-72 bg-white border border-gray-200 z-10 rounded-lg shadow-md no-scrollbar overflow-hidden"
+          className="
+            absolute 
+            top-5 left-5 
+            h-[calc(100%-2.5rem)] 
+            w-72 
+            bg-white 
+            border border-gray-200 
+            z-10 
+            rounded-lg
+            shadow-md
+            no-scrollbar overflow-hidden
+          "
         >
           <Sidebar />
         </aside>
       )}
 
-      {/* Right Sidebar (appears when a location is selected) */}
-      {selectedResult && (
-        <aside
-          id="route-details-sidebar"
-          className="absolute top-5 right-5 h-[calc(100%-2.5rem)] w-80 bg-white border border-gray-200 z-10 rounded-lg shadow-md overflow-hidden"
-        >
-          <RouteDetailsSidebar />
-        </aside>
-      )}
-
-      {/* Search Bar at the top center */}
+      {/* The main search bar at top center, always visible */}
       <div className="absolute top-10 w-full flex flex-col items-center z-10">
         <div
           className="flex items-center space-x-2 bg-white shadow-md border border-gray-300 rounded-full px-4 py-2 max-w-xl w-full sm:w-2/3 md:w-1/2 lg:w-1/3"

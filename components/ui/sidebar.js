@@ -1,12 +1,13 @@
 // components/ui/sidebar.js
 "use client";
 
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { useAppStore } from "@/lib/store";
 import Result from "@/components/ui/result";
 import { fetchORSRoute } from "@/lib/ors";
 
-export default function Sidebar() {
+export default function Sidebar({closeSidebar}) {
+
   const {
     searchTerm,
     setSearchResults,
@@ -102,11 +103,20 @@ export default function Sidebar() {
       console.error("User location not available.");
     }
   };
-  
+
   return (
     <div className="p-4 no-scrollbar overflow-y-auto h-full">
-      <h2 className="text-xl font-semibold mb-4">Results</h2>
-
+      {/* Header with Close Button */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">Results</h2>
+        <button
+          onClick={closeSidebar}
+          className="text-gray-500 hover:text-gray-700"
+          aria-label="Close sidebar"
+        >
+          <span className="text-lg font-bold">&times;</span>
+        </button>
+      </div>
       {searchTerm.length === 0 ? (
         <p className="text-sm text-gray-500">No search yet.</p>
       ) : filteredResults.length === 0 ? (
