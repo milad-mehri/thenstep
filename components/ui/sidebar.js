@@ -22,8 +22,9 @@ export default function Sidebar() {
       {
         title: "Sample Result 1",
         description: "A short description for result 1",
-        longitude: -130,
-        latitude: 49,
+        longitude: -123.12,
+        latitude: 60.28,
+
         date: "2024-01-01",
         image:
           "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Elizabeth_Tower%2C_June_2022.jpg/800px-Elizabeth_Tower%2C_June_2022.jpg",
