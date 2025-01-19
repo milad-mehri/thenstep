@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { useAppStore } from "@/lib/store"
 
 export default function Result({
   title = "Untitled",
@@ -8,8 +9,12 @@ export default function Result({
   longitude = "N/A",
   latitude = "N/A",
   date = "Unknown date",
-  image = "https://via.placeholder.com/150", // placeholder image
+  image = "https://via.placeholder.com/150",
+  type = "place", // NEW
+  geometry = [],   // NEW
 }) {
+  const { setRouteGeometry } = useAppStore()
+
   return (
     <div className="border rounded-md p-4">
       <img
@@ -24,6 +29,16 @@ export default function Result({
         <p>Coordinates: {latitude}, {longitude}</p>
         <p>Date: {date}</p>
       </div>
+
+      {/* If it's a route, show a button to set the route geometry */}
+      {type === "route" && geometry.length > 1 && (
+        <button
+          onClick={() => setRouteGeometry(geometry)}
+          className="mt-2 px-3 py-1 bg-blue-600 text-white rounded"
+        >
+          Show Route on Map
+        </button>
+      )}
     </div>
   )
 }

@@ -1,4 +1,3 @@
-// components/ui/map.js
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -9,20 +8,26 @@ import {
   Popup,
   useMap,
   useMapEvents,
+  Polyline, // NEW: import Polyline
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { useAppStore } from "@/lib/store";
 
+// We still import Leaflet's marker icons for the shadow image
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// 1) Override Leaflet's default icon for general markers (search results, etc.)
+// ---------------------------------
+// 1) Override Leaflet's default icon for general markers (e.g. search results)
+// ---------------------------------
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
+  iconUrl:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
   iconUrl:
     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Google_Maps_pin.svg/1200px-Google_Maps_pin.svg.png",
   shadowUrl: markerShadow.src,
@@ -32,30 +37,37 @@ L.Icon.Default.mergeOptions({
   popupAnchor: [0, -60],
   shadowSize: [65, 65],
 });
+});
 
 // 2) Custom icon for the user's current location
 const userLocationIcon = L.icon({
-  iconUrl: "https://cdn3.iconfinder.com/data/icons/maps-and-navigation-7/65/68-512.png",
+  iconUrl:
+    "https://cdn3.iconfinder.com/data/icons/maps-and-navigation-7/65/68-512.png",
   iconSize: [35, 35],
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
 });
+});
 
 // A button to fly to the user's location
 function FlyToUserLocationButton() {
+  const map = useMap();
   const map = useMap();
 
   const handleFlyToLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          map.flyTo([coords.latitude, coords.longitude], 13, { duration: 2 });
+          map.flyTo([coords.latitude, coords.longitude], 18, { duration: 2 });
         },
         (error) => console.error("Error retrieving location:", error)
       );
+      );
     } else {
       alert("Geolocation is not supported by your browser.");
+      alert("Geolocation is not supported by your browser.");
     }
+  };
   };
 
   return (
@@ -77,6 +89,7 @@ function FlyToUserLocationButton() {
       Fly to My Location
     </button>
   );
+  );
 }
 
 // 3) A small helper component to handle map clicks
@@ -84,18 +97,25 @@ function AddPinOnClick({ onPinAdd }) {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
+      // Pass new lat/lng to the parent via callback
       onPinAdd({ lat, lng });
     },
+  });
+  return null;
   });
   return null;
 }
 
 export default function Map() {
+  const { routeGeometry, setRouteGeometry, selectedResult } = useAppStore(); // ADDED: selectedResult, setRouteGeometry
   const { userLocation, setUserLocation, searchResults } = useAppStore();
   const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
 
-  // Only one pinned location at a time
+  // We store only one clicked pin in state
   const [clickedPin, setClickedPin] = useState(null);
+
+  // Debug: see what searchResults we have
+  console.log("searchResults from store:", searchResults);
 
   // Fetch user location once
   useEffect(() => {
@@ -107,18 +127,30 @@ export default function Map() {
             lng: pos.coords.longitude,
           });
           setHasFetchedLocation(true);
+          });
+          setHasFetchedLocation(true);
         },
         (err) => console.error("Error fetching location:", err),
         { enableHighAccuracy: true }
       );
+      );
     }
   }, [hasFetchedLocation, setUserLocation]);
+
+  // NEW: Whenever selectedResult changes, if it's a route, set route geometry
+  useEffect(() => {
+    if (selectedResult && selectedResult.type === "route" && selectedResult.geometry) {
+      setRouteGeometry(selectedResult.geometry);
+    } else {
+      setRouteGeometry([]);
+    }
+  }, [selectedResult, setRouteGeometry]);
 
   return (
     <div className="relative h-full w-full">
       <MapContainer
         center={[49, -125]}
-        zoom={6}
+        zoom={10}
         scrollWheelZoom
         className="h-full w-full z-0"
       >
@@ -161,14 +193,16 @@ export default function Map() {
                 </Popup>
               </Marker>
             );
+            );
           }
+          return null;
           return null;
         })}
 
         {/* Listen for clicks => place a single pinned location */}
         <AddPinOnClick
           onPinAdd={(newPin) => {
-            setClickedPin(newPin);
+            setClickedPin(newPin); // Overwrites any existing pin
             console.log("Pin dropped at:", newPin);
           }}
         />
@@ -184,7 +218,15 @@ export default function Map() {
             </Popup>
           </Marker>
         )}
+        {console.log("Route geometry:", routeGeometry)}
+        {routeGeometry.length > 1 && (
+          <Polyline
+            pathOptions={{ color: "blue", weight: 4 }}
+            positions={routeGeometry}
+          />
+        )}
       </MapContainer>
     </div>
+  );
   );
 }
