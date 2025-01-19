@@ -49,11 +49,48 @@ export default function Sidebar() {
   // Handle result selection and fetch route
   const handleResultClick = async (result) => {
     setSelectedResult(result);
-
+  
     if (userLocation) {
       try {
+        // Example route details
+        const details = [
+          {
+            mode: "Walking",
+            time: "15 mins",
+            benefits: [
+              { label: "Eco-Friendly", icon: "ecoFriendly" },
+              { label: "Exercise", icon: "exercise" },
+            ],
+          },
+          {
+            mode: "Jogging",
+            time: "10 mins",
+            benefits: [
+              { label: "Exercise", icon: "exercise" },
+            ],
+          },
+          {
+            mode: "Biking",
+            time: "8 mins",
+            benefits: [
+              { label: "Eco-Friendly", icon: "ecoFriendly" },
+              { label: "Exercise", icon: "exercise" },
+            ],
+          },
+          {
+            mode: "Scenic Path",
+            time: "20 mins",
+            benefits: [
+              { label: "Scenic Beauty", icon: "scenic" },
+            ],
+          },
+        ];
+  
+        setRouteDetails(details);
+  
+        // Fetch and display the route geometry
         const route = await fetchORSRoute([
-          [userLocation.lat, userLocation.lng], // Start from user location
+          [userLocation.lat, userLocation.lng], // Start
           [result.latitude, result.longitude], // Destination
         ]);
         setRouteGeometry(route);
@@ -64,7 +101,7 @@ export default function Sidebar() {
       console.error("User location not available.");
     }
   };
-
+  
   return (
     <div className="p-4 no-scrollbar overflow-y-auto h-full">
       <h2 className="text-xl font-semibold mb-4">Results</h2>
