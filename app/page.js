@@ -23,6 +23,11 @@ export default function Home() {
     "Plan a day trip to Lonsdale Quay",
     "Find the best coffee shops nearby",
     "Best scenic hiking trails",
+    "Where can I try authentic Italian food?",
+    "Explore historical landmarks in the area",
+    "Discover live music events this weekend",
+    "Find the nearest yoga studios",
+    "First date plan in downtown Vancouver",
   ];
 
   const [promptIndex, setPromptIndex] = useState(0);
