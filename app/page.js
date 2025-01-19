@@ -83,13 +83,11 @@ export default function Home() {
     }
   }
 
-
   //this will start the tour
   useEffect(() => {
     // Start the tour when the page loads
     startNextStep("mainTour");
   }, [startNextStep]);
-
 
   useEffect(() => {
     // If we've typed the entire current prompt, wait a bit, then go to the next prompt
@@ -136,7 +134,7 @@ export default function Home() {
             no-scrollbar overflow-hidden
           "
         >
-          <Sidebar />
+          <Sidebar closeSidebar={() => setHasSearched(false)} />
         </aside>
       )}
 
