@@ -16,6 +16,7 @@ export default function Sidebar({ closeSidebar, search_obj, coords, isLoading })
 
   const [places, setPlaces] = useState([]);
   const [events, setEvents] = useState([]);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     if (search_obj) {
@@ -25,21 +26,24 @@ export default function Sidebar({ closeSidebar, search_obj, coords, isLoading })
   }, [search_obj]);
 
   const handleClick = () => {
-    closeSidebar();
+    setIsVisible(false);
+    setTimeout(() => {
+      closeSidebar();
+    }, 300); // Match the duration of the CSS transition
   };
 
   return (
-    <div className="p-4 no-scrollbar overflow-y-auto h-full">
+    <div className={`p-4 no-scrollbar overflow-y-auto h-full transition-transform duration-300 ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}>
       {/* Header with Close Button */}
       <div className=" p-2 items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Results</h2>
-        {/* <button
+        <button
           onClick={handleClick}
           className="text-gray-500 hover:text-gray-700"
           aria-label="Close sidebar"
         >
           <span className="text-lg font-bold">&times;</span>
-        </button> */}
+        </button>
       </div>
 
       {/* Display loading skeleton */}
@@ -68,7 +72,7 @@ export default function Sidebar({ closeSidebar, search_obj, coords, isLoading })
           <div className="text-black">
             {places.length > 0 ? (
               places.map((place, index) => (
-                <Result key={index} title={place.name} description={place.desc} latitude={coords.places[index].lat} longitude={coords.places[index].lng} date={place.address}/>
+                <Result key={index} title={place?.name} description={place?.desc} latitude={coords?.places[index].lat} longitude={coords?.places[index].lng} date={place?.address}/>
               ))
             ) : (
               <p className="text-black">No places found</p>
