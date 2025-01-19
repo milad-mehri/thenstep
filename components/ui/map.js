@@ -7,22 +7,42 @@ import {
   TileLayer,
   Marker,
   Popup,
+  Polyline,
   useMap,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   useMapEvents,
-  Polyline, // NEW: import Polyline
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useAppStore } from "@/lib/store";
+import { fetchORSRoute } from "@/lib/ors"; // Update the import path accordingly
 
-// We still import Leaflet's marker icons for the shadow image
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+// Leaflet default marker icons
+>>>>>>> Stashed changes
+=======
+// Leaflet default marker icons
+>>>>>>> Stashed changes
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// ---------------------------------
-// 1) Override Leaflet's default icon for general markers (e.g. search results)
-// ---------------------------------
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+// Override default for search results
+=======
+// Override Leaflet's default icon
+>>>>>>> Stashed changes
+=======
+// Override Leaflet's default icon
+>>>>>>> Stashed changes
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -35,7 +55,15 @@ L.Icon.Default.mergeOptions({
   shadowSize: [65, 65],
 });
 
-// 2) Custom icon for the user's current location
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+// Custom icon for user location
+=======
+// Custom icon for user's current location
+>>>>>>> Stashed changes
+=======
+// Custom icon for user's current location
+>>>>>>> Stashed changes
 const userLocationIcon = L.icon({
   iconUrl:
     "https://cdn3.iconfinder.com/data/icons/maps-and-navigation-7/65/68-512.png",
@@ -44,7 +72,15 @@ const userLocationIcon = L.icon({
   popupAnchor: [0, -35],
 });
 
-// A button to fly to the user's location
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+// Button to fly to user location
+=======
+// Button to fly to the user's location
+>>>>>>> Stashed changes
+=======
+// Button to fly to the user's location
+>>>>>>> Stashed changes
 function FlyToUserLocationButton() {
   const map = useMap();
 
@@ -82,30 +118,70 @@ function FlyToUserLocationButton() {
   );
 }
 
-// 3) A small helper component to handle map clicks
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 function AddPinOnClick({ onPinAdd }) {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-      // Pass new lat/lng to the parent via callback
       onPinAdd({ lat, lng });
     },
   });
+=======
+=======
+>>>>>>> Stashed changes
+// Fit the map to the route
+function FitToRoute({ route }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (route.length > 1) {
+      const bounds = L.latLngBounds(route);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }, [route, map]);
+
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
   return null;
 }
 
+// Main Map Component
 export default function Map() {
-  const { routeGeometry, setRouteGeometry, selectedResult } = useAppStore(); // ADDED: selectedResult, setRouteGeometry
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const { userLocation, setUserLocation, searchResults } = useAppStore();
   const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
-
-  // We store only one clicked pin in state
   const [clickedPin, setClickedPin] = useState(null);
 
-  // Debug: see what searchResults we have
-  console.log("searchResults from store:", searchResults);
+=======
+  const {
+    routeGeometry,
+    setRouteGeometry,
+    selectedResult,
+    userLocation,
+    setUserLocation,
+    searchResults,
+  } = useAppStore();
+  const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
 
-  // Fetch user location once
+  // Fetch user's location on mount
+>>>>>>> Stashed changes
+=======
+  const {
+    routeGeometry,
+    setRouteGeometry,
+    selectedResult,
+    userLocation,
+    setUserLocation,
+    searchResults,
+  } = useAppStore();
+  const [hasFetchedLocation, setHasFetchedLocation] = useState(false);
+
+  // Fetch user's location on mount
+>>>>>>> Stashed changes
   useEffect(() => {
     if (!hasFetchedLocation) {
       navigator.geolocation.getCurrentPosition(
@@ -122,10 +198,23 @@ export default function Map() {
     }
   }, [hasFetchedLocation, setUserLocation]);
 
-  // NEW: Whenever selectedResult changes, if it's a route, set route geometry
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+  return (
+    <div className="relative h-full w-full">
+      <MapContainer
+        center={[49, -125]}
+        zoom={6}
+=======
+  // Fetch route from ORS API whenever the selected result changes
+
   useEffect(() => {
     if (selectedResult && selectedResult.type === "route" && selectedResult.geometry) {
-      setRouteGeometry(selectedResult.geometry);
+      console.log("Selected result geometry:", selectedResult.geometry); // Debug log
+  
+      fetchORSRoute(selectedResult.geometry)
+        .then((route) => setRouteGeometry(route))
+        .catch((error) => console.error("Error fetching ORS route:", error));
     } else {
       setRouteGeometry([]);
     }
@@ -134,8 +223,30 @@ export default function Map() {
   return (
     <div className="relative h-full w-full">
       <MapContainer
-        center={[49, -125]}
-        zoom={10}
+        center={[49.266757, -123.245905]} // UBC Rec Center
+        zoom={15}
+>>>>>>> Stashed changes
+=======
+  // Fetch route from ORS API whenever the selected result changes
+
+  useEffect(() => {
+    if (selectedResult && selectedResult.type === "route" && selectedResult.geometry) {
+      console.log("Selected result geometry:", selectedResult.geometry); // Debug log
+  
+      fetchORSRoute(selectedResult.geometry)
+        .then((route) => setRouteGeometry(route))
+        .catch((error) => console.error("Error fetching ORS route:", error));
+    } else {
+      setRouteGeometry([]);
+    }
+  }, [selectedResult, setRouteGeometry]);
+    
+  return (
+    <div className="relative h-full w-full">
+      <MapContainer
+        center={[49.266757, -123.245905]} // UBC Rec Center
+        zoom={15}
+>>>>>>> Stashed changes
         scrollWheelZoom
         zoomControl={false}  // remove default zoom in/out
         className="h-full w-full z-0"
@@ -145,7 +256,14 @@ export default function Map() {
           attribution="&copy; OpenStreetMap contributors"
         />
 
-        {/* Show user location if available, with a custom icon */}
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        {/* User location */}
+>>>>>>> Stashed changes
+=======
+        {/* User location */}
+>>>>>>> Stashed changes
         {userLocation && (
           <Marker position={userLocation} icon={userLocationIcon}>
             <Popup>
@@ -154,10 +272,10 @@ export default function Map() {
           </Marker>
         )}
 
-        {/* Button to fly to user location */}
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <FlyToUserLocationButton />
 
-        {/* Render markers for each search result (from global store) */}
         {searchResults.map((res, i) => {
           if (
             typeof res.latitude === "number" &&
@@ -182,32 +300,62 @@ export default function Map() {
           return null;
         })}
 
-        {/* Listen for clicks => place a single pinned location */}
         <AddPinOnClick
           onPinAdd={(newPin) => {
-            setClickedPin(newPin); // Overwrites any existing pin
+            setClickedPin(newPin);
             console.log("Pin dropped at:", newPin);
           }}
         />
-
-        {/* Render the single user-clicked pin, if any */}
         {clickedPin && (
           <Marker position={[clickedPin.lat, clickedPin.lng]}>
+=======
+        {/* Fly-to-location button */}
+        <FlyToUserLocationButton />
+
+=======
+        {/* Fly-to-location button */}
+        <FlyToUserLocationButton />
+
+>>>>>>> Stashed changes
+        {/* Search result markers */}
+        {searchResults.map((res, i) => (
+          <Marker
+            key={i}
+            position={[res.latitude, res.longitude]}
+            eventHandlers={{
+              mouseover: (e) => e.target.openPopup(),
+              mouseout: (e) => e.target.closePopup(),
+            }}
+          >
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
             <Popup>
-              <p>You clicked here!</p>
-              <p>
-                Lat: {clickedPin.lat}, Lng: {clickedPin.lng}
-              </p>
+              <h3 className="font-semibold">{res.title || "Untitled"}</h3>
+              <p>{res.description || "No description."}</p>
             </Popup>
           </Marker>
-        )}
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> Stashed changes
+        ))}
 
-        {console.log("Route geometry:", routeGeometry)}
+        {/* Render the route as a polyline */}
         {routeGeometry.length > 1 && (
-          <Polyline
-            pathOptions={{ color: "blue", weight: 4 }}
-            positions={routeGeometry}
-          />
+          <>
+            <Polyline
+              pathOptions={{ color: "blue", weight: 4 }}
+              positions={routeGeometry}
+            />
+            <FitToRoute route={routeGeometry} />
+          </>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         )}
       </MapContainer>
     </div>

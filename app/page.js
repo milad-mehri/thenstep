@@ -86,6 +86,9 @@ export default function Home() {
   }
 
   function handleSearchSubmit() {
+<<<<<<< Updated upstream
+    if (!searchTerm.trim()) return;
+=======
     if (!search.trim()) return;
 
     console.log("User searched:", search);
@@ -106,6 +109,7 @@ export default function Home() {
     ]);
 
     // Hide the center bar and show the sidebar
+>>>>>>> Stashed changes
     setHasSearched(true);
   }
 
