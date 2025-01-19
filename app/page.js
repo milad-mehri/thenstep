@@ -26,12 +26,10 @@ export default function Home() {
   const { selectedResult, searchTerm, setSearchTerm } = useAppStore();
 
   // NextStepJS hooks
+
+  // Destructure the startNextStep function from the useNextStep hook
   const {
     startNextStep,
-    currentStep,
-    isNextStepVisible,
-    setCurrentStep,
-    onStepChange,
   } = useNextStep();
 
   // Prompts for placeholder text
@@ -70,7 +68,7 @@ export default function Home() {
   function handleSearchSubmit() {
     if (!searchTerm.trim()) return;
     setHasSearched(true);
-  }
+  } 
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {

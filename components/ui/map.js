@@ -61,10 +61,12 @@ function FlyToUserLocationButton() {
   };
 
   return (
+
+    //Created the Button to be a crosshair
     <Crosshair
       size={40}
       onClick={handleFlyToLocation}
-      className="bg-blue-500"
+      className="bg-blue-600"
       style={{
         position: "absolute",
         bottom: "10px",

@@ -3,40 +3,41 @@ import "./globals.css";
 import { NextStepProvider, NextStep } from "nextstepjs";
 
 export const metadata = {
-  title: "Pins Demo",
+  title: "NextStep",
   description: "Display search results as pins on a Leaflet map",
 };
 
+//Define the steps for the NextStep tour!
 const steps = [
   {
     tour: "mainTour",
     steps: [
       {
-        title: "Welcome to NextStep!",
-        content: "Let us guide you through the features of this application.",
+        title: "Welcome to NextStep! ✨",
+        content: " NextStep helps you find the best routes based on safety, traffic, fitness, and scenery! Let us guide you through its awesome features. 😊",
         selector: "body", // General welcome message, no specific element
         showControls: true,
         showSkip: true,
       },
       {
-        title: "Search Bar",
-        content: "This is the search bar where you can type your queries.",
+        title:"Search Bar 🔍",
+        content: "Type your queries here to easily find what you're looking for! 📝,",
         selector: "#search-box", // Highlights the search bar
         side: "bottom",
         showControls: true,
         showSkip: true,
       },
       {
-        title: "Categories",
-        content: "Click on a category to quickly find what you're looking for.",
+        title: "Categories 📂",
+        content: "Explore different categories to discover content that suits your needs!",
         selector: ".mt-4", // Highlights the category buttons section
         side: "top",
         showControls: true,
         showSkip: true,
       },
       {
-        title: "Map",
-        content: "To nagivate",
+        title: "Map 🗺️",
+        content: "Use the map to navigate and visualize the best routes and options! 🛣️",
         selector: "#map", // Highlights the sidebar
         side: "body",
         showControls: true,
