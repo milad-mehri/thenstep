@@ -145,6 +145,7 @@ export default function Map() {
         center={[49.266757, -123.245905]} // UBC Rec Center
         zoom={15}
         scrollWheelZoom
+        zoomControl={false}
         className="h-full w-full z-0"
       >
         <TileLayer
