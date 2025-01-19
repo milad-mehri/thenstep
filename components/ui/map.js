@@ -171,10 +171,10 @@ export default function Map() {
         <FlyToUserLocationButton />
 
         {/* Search result markers */}
-        {searchResults.map((res, i) => (
+        {searchResults.coords.places.map((res, i) => (
           <Marker
             key={i}
-            position={[res.latitude, res.longitude]}
+            position={[res.lat, res.lng]}
             eventHandlers={{
               mouseover: (e) => e.target.openPopup(),
               mouseout: (e) => e.target.closePopup(),

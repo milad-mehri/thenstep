@@ -2,6 +2,7 @@
 
 import React from "react"
 import { useAppStore } from "@/lib/store"
+import placeholder from "@/public/vercel.svg"
 
 export default function Result({
   title = "Untitled",
@@ -9,16 +10,17 @@ export default function Result({
   longitude = "N/A",
   latitude = "N/A",
   date = "Unknown date",
-  image = "https://via.placeholder.com/150",
+  image = "",
   type = "place", // NEW
   geometry = [],   // NEW
+  ...props
 }) {
   const { setRouteGeometry } = useAppStore()
 
   return (
-    <div className="border rounded-md p-4">
+    <div className="border rounded-md p-4" {...props}>
       <img
-        src={image}
+        src={placeholder}
         alt={title}
         className="w-full h-auto mb-2 rounded-md object-cover"
       />

@@ -6,6 +6,7 @@ import { useAppStore } from "@/lib/store";
 import Sidebar from "@/components/ui/sidebar";
 import RouteDetailsSidebar from "@/components/ui/RouteDetailsSidebar";
 import { useNextStep } from "nextstepjs";
+
 import {
   Utensils,
   Hotel,
@@ -22,8 +23,11 @@ const MapNoSSR = dynamic(() => import("@/components/ui/map"), {
 });
 
 export default function Home() {
+  const {
+      userLocation,
+      setSearchResults,
+    } = useAppStore();
   const [hasSearched, setHasSearched] = useState(false);
-  const { selectedResult, searchTerm, setSearchTerm } = useAppStore();
 
   // NextStepJS hooks
 
@@ -41,10 +45,16 @@ export default function Home() {
     "Best scenic hiking trails",
   ];
 
+  // used to type out placeholder text
   const [promptIndex, setPromptIndex] = useState(0); // Current prompt index
   const [charIndex, setCharIndex] = useState(0); // Current character index
   const currentPrompt = prompts[promptIndex]; // Current prompt text
   const typedText = currentPrompt.slice(0, charIndex); // Dynamically typed text
+
+  const [search_obj, setSearch_obj] = useState({});
+  const [selectedResult, setSelectedResult] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const categories = [
     { label: "Restaurants", icon: <Utensils className="h-4 w-4" /> },
@@ -65,9 +75,15 @@ export default function Home() {
     setHasSearched(true);
   }
 
-  function handleSearchSubmit() {
-    if (!searchTerm.trim()) return;
+  async function handleSearchSubmit() {
+    setIsLoading(true);
     setHasSearched(true);
+    const res = await fetch(`http://localhost:3001/search?q=${searchTerm}&lat=${userLocation.lat}&lng=${userLocation.lng}`);
+    const obj = await res.json();
+    setSearch_obj(obj);
+    setSearchResults(obj);
+    setIsLoading(false);
+    console.log(obj);
   } 
 
   function handleKeyDown(e) {
@@ -111,7 +127,7 @@ export default function Home() {
           id="sidebar"
           className="absolute top-5 left-5 h-[calc(100%-2.5rem)] w-72 bg-white border border-gray-200 z-10 rounded-lg shadow-md no-scrollbar overflow-hidden"
         >
-          <Sidebar />
+          <Sidebar closeSidebar={() => setHasSearched(false)} search_obj={search_obj.eng} coords={search_obj.coords} isLoading={isLoading} />
         </aside>
       )}
 
@@ -128,7 +144,7 @@ export default function Home() {
       {/* Search Bar at the top center */}
       <div className="absolute top-10 w-full flex flex-col items-center z-10">
         <div
-          className="flex items-center space-x-2 bg-white shadow-md border border-gray-300 rounded-full px-4 py-2 max-w-xl w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
+          className="flex items-center space-x-2 bg-white shadow-md border border-gray-300 rounded-full px-4 py-2 w-[45%] focus-within:w-[50%] transition-all duration-300 ease-in-out"
           id="search-box"
         >
           {/* Magnifier icon */}
