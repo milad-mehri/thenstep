@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useAppStore } from "@/lib/store";
 import Sidebar from "@/components/ui/sidebar";
+import RouteDetailsSidebar from "@/components/ui/RouteDetailsSidebar";
 import { useNextStep } from "nextstepjs";
 import {
   Utensils,
@@ -22,6 +23,9 @@ const MapNoSSR = dynamic(() => import("@/components/ui/map"), {
 
 export default function Home() {
   const [hasSearched, setHasSearched] = useState(false);
+  const { selectedResult, searchTerm, setSearchTerm } = useAppStore();
+
+  // NextStepJS hooks
   const {
     startNextStep,
     currentStep,
@@ -30,29 +34,20 @@ export default function Home() {
     onStepChange,
   } = useNextStep();
 
-  // Global store searchTerm
-  const { searchTerm, setSearchTerm } = useAppStore();
-
   // Prompts for placeholder text
   const prompts = [
     "I want to visit...",
-    "Show me Japanese restaurants",
+    "If you see this hi",
     "Plan a day trip to Lonsdale Quay",
     "Find the best coffee shops nearby",
     "Best scenic hiking trails",
   ];
 
-  // Which prompt we're on
-  const [promptIndex, setPromptIndex] = useState(0);
-  // Which character we are on in the current prompt
-  const [charIndex, setCharIndex] = useState(0);
+  const [promptIndex, setPromptIndex] = useState(0); // Current prompt index
+  const [charIndex, setCharIndex] = useState(0); // Current character index
+  const currentPrompt = prompts[promptIndex]; // Current prompt text
+  const typedText = currentPrompt.slice(0, charIndex); // Dynamically typed text
 
-  // Grab the current prompt
-  const currentPrompt = prompts[promptIndex];
-  // The "typed" portion of the current prompt
-  const typedText = currentPrompt.slice(0, charIndex);
-
-  // Category icons
   const categories = [
     { label: "Restaurants", icon: <Utensils className="h-4 w-4" /> },
     { label: "Hotels", icon: <Hotel className="h-4 w-4" /> },
@@ -83,66 +78,57 @@ export default function Home() {
     }
   }
 
-
-  //this will start the tour
+  // Start the NextStepJS tour on load
   useEffect(() => {
-    // Start the tour when the page loads
     startNextStep("mainTour");
   }, [startNextStep]);
 
-
+  // Typing effect for placeholder prompts
   useEffect(() => {
-    // If we've typed the entire current prompt, wait a bit, then go to the next prompt
     if (charIndex === currentPrompt.length) {
-      const waitingTime = 1500; // 1.5s pause before moving to the next
-      const timeoutId = setTimeout(() => {
-        // Move to the next prompt
+      const timeout = setTimeout(() => {
         setPromptIndex((prev) => (prev + 1) % prompts.length);
-        setCharIndex(0); // reset char index for the new prompt
-      }, waitingTime);
-      return () => clearTimeout(timeoutId);
+        setCharIndex(0);
+      }, 750); // Wait 1.5s before switching to the next prompt
+      return () => clearTimeout(timeout);
     }
 
-    // Otherwise, keep typing
-    const typingSpeed = 100; // ms per character
-    const timeoutId = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setCharIndex((prev) => prev + 1);
-    }, typingSpeed);
+    }, 35); // Type one character every 100ms
 
-    return () => clearTimeout(timeoutId);
-  }, [charIndex, currentPrompt, prompts.length]);
+    return () => clearTimeout(timeout);
+  }, [charIndex, currentPrompt]);
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden" id="map">
+    <main className="relative w-screen h-screen overflow-hidden">
       {/* Map in the background */}
       <div className="absolute inset-0 z-0">
         <MapNoSSR />
       </div>
 
-      {/* Floating sidebar (only after searching) */}
+      {/* Left Sidebar (appears after searching) */}
       {hasSearched && (
         <aside
           id="sidebar"
-          className="
-            absolute 
-            top-5 left-5 
-            h-[calc(100%-2.5rem)] 
-            w-72 
-            bg-white 
-            border border-gray-200 
-            z-10 
-            rounded-lg
-            shadow-md
-            no-scrollbar overflow-hidden
-          "
+          className="absolute top-5 left-5 h-[calc(100%-2.5rem)] w-72 bg-white border border-gray-200 z-10 rounded-lg shadow-md no-scrollbar overflow-hidden"
         >
           <Sidebar />
         </aside>
       )}
 
-      {/* The main search bar at top center, always visible */}
+      {/* Right Sidebar (appears when a location is selected) */}
+      {selectedResult && (
+        <aside
+          id="route-details-sidebar"
+          className="absolute top-5 right-5 h-[calc(100%-2.5rem)] w-80 bg-white border border-gray-200 z-10 rounded-lg shadow-md overflow-hidden"
+        >
+          <RouteDetailsSidebar />
+        </aside>
+      )}
+
+      {/* Search Bar at the top center */}
       <div className="absolute top-10 w-full flex flex-col items-center z-10">
-        {/* Big search box */}
         <div
           className="flex items-center space-x-2 bg-white shadow-md border border-gray-300 rounded-full px-4 py-2 max-w-xl w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
           id="search-box"
@@ -162,7 +148,7 @@ export default function Home() {
             />
           </svg>
 
-          {/* The input */}
+          {/* Search input */}
           <input
             type="text"
             value={searchTerm}
@@ -181,16 +167,13 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Category icons => instantly show sidebar + set search */}
+        {/* Category buttons */}
         <div className="mt-4 flex gap-2 flex-wrap justify-center max-w-xl">
           {categories.map((cat) => (
             <button
               key={cat.label}
-              className="flex items-center space-x-1 px-3 py-1 
-                         bg-white border border-gray-300 
-                         rounded-full text-gray-600 shadow-sm 
-                         hover:bg-gray-50"
-              onClick={() => setHasSearched(true)}
+              className="flex items-center space-x-1 px-3 py-1 bg-white border border-gray-300 rounded-full text-gray-600 shadow-sm hover:bg-gray-50"
+              onClick={() => handleCategoryClick(cat.label)}
             >
               {cat.icon}
               <span className="text-sm">{cat.label}</span>

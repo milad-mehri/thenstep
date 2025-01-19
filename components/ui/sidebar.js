@@ -13,6 +13,7 @@ export default function Sidebar() {
     setRouteGeometry,
     userLocation,
     setSelectedResult,
+    setRouteDetails
   } = useAppStore();
 
   // Example mock data for results
