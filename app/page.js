@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <main className="flex h-screen w-screen">
       {/* LEFT: Sidebar at 1/4 width */}
-      <div className="w-1/4 border-r p-4">
+      <div className="w-1/4 border-r p-4 h-full overflow-y-auto no-scrollbar">
         <Sidebar />
       </div>
 
