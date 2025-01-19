@@ -29,9 +29,16 @@ import { useAppStore } from "@/lib/store";
 // Import the ORS utility
 import { fetchORSRoute } from "@/lib/ors";
 
+// If using Zustand or a global store:
+import { useAppStore } from "@/lib/store";
+
+// Import the ORS utility
+import { fetchORSRoute } from "@/lib/ors";
+
 export default function Sidebar() {
   const { searchTerm, setSearchResults } = useAppStore();
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   // Filter or fetch logic based on searchTerm
   const filteredResults = useMemo(() => {
@@ -49,6 +56,8 @@ export default function Sidebar() {
           },
           
 =======
+=======
+>>>>>>> Stashed changes
   // Grab necessary state and actions from the store
   const {
     setSearchResults,
@@ -109,6 +118,9 @@ export default function Sidebar() {
             [49.41461, 8.681495], // [latitude, longitude]
             [49.420318, 8.687872] // [latitude, longitude]
           ], // Will be filled after fetching from ORS
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
       },
     ];
@@ -120,6 +132,7 @@ export default function Sidebar() {
     setSearchResults(filteredResults);
   }, [filteredResults, setSearchResults]);
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   return (
     <div className="p-4 no-scrollbar overflow-y-auto h-full">
@@ -135,6 +148,8 @@ export default function Sidebar() {
         <div className="flex flex-col gap-4">
           {filteredResults.map((res, i) => (
 =======
+=======
+>>>>>>> Stashed changes
   // By default, if there's at least 1 result and we have no selectedResult yet,
   // select the first result automatically.
   useEffect(() => {
@@ -219,6 +234,9 @@ export default function Sidebar() {
           </p>
         ) : (
           filteredResults.map((res, i) => (
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             <Result
               key={i}
@@ -229,11 +247,14 @@ export default function Sidebar() {
               date={res.date}
               image={res.image}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             />
           ))}
         </div>
       )}
 =======
+=======
+>>>>>>> Stashed changes
               onClick={() => setSelectedResult(res)}
               selected={selectedResult === res}
             />
