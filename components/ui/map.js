@@ -146,7 +146,7 @@ export default function Map() {
   return (
     <div className="relative h-full w-full">
       <MapContainer
-        center={[49.266757, -123.245905]} // UBC Rec Center
+        center={userLocation?[userLocation.lat,userLocation.lng]:[49.266757, -123.245905]} //{[49.266757, -123.245905]} // UBC Rec Center
         zoom={15}
         scrollWheelZoom
         zoomControl={false}
