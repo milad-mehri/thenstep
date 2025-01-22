@@ -1,4 +1,7 @@
-![Demo](DEMO.gif)
+<p align="center">
+  <img src="path/to/DEMO.gif" width="200%" alt="Demo">
+</p>
+
 # NextStep
 
 ## Inspiration
