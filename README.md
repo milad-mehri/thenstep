@@ -1,5 +1,4 @@
-[![Watch the video](https://img.youtube.com/vi/mIPAovu09cM/0.jpg)](https://youtu.be/mIPAovu09cM)
-
+[![YouTube](http://i.ytimg.com/vi/mIPAovu09cM/hqdefault.jpg)](https://www.youtube.com/watch?v=mIPAovu09cM)
 # NextStep
 
 ## Inspiration
