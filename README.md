@@ -1,4 +1,4 @@
-[![YouTube](http://i.ytimg.com/vi/mIPAovu09cM/hqdefault.jpg)](https://www.youtube.com/watch?v=mIPAovu09cM)
+![Demo](DEMO.gif)
 # NextStep
 
 ## Inspiration
