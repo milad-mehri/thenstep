@@ -60,6 +60,8 @@ function FlyToUserLocationButton() {
     }
   };
 
+
+
   return (
     //Created the Button to be a crosshair
     <Crosshair

@@ -23,18 +23,13 @@ const MapNoSSR = dynamic(() => import("@/components/ui/map"), {
 });
 
 export default function Home() {
-  const {
-      userLocation,
-      setSearchResults,routes
-    } = useAppStore();
+  const { userLocation, setSearchResults, routes, setRouteLoading } = useAppStore();
   const [hasSearched, setHasSearched] = useState(false);
 
   // NextStepJS hooks
 
   // Destructure the startNextStep function from the useNextStep hook
-  const {
-    startNextStep,
-  } = useNextStep();
+  const { startNextStep } = useNextStep();
 
   // Prompts for placeholder text
   const prompts = [
@@ -77,14 +72,63 @@ export default function Home() {
 
   async function handleSearchSubmit() {
     setIsLoading(true);
+    setRouteLoading(true);
     setHasSearched(true);
-    const res = await fetch(`http://localhost:3001/search?q=${searchTerm}&lat=${userLocation.lat}&lng=${userLocation.lng}`);
-    const obj = await res.json();
-    setSearch_obj(obj);
-    setSearchResults(obj);
-    setIsLoading(false);
-    console.log(obj);
-  } 
+    // const res = await fetch(`http://localhost:3001/search?q=${searchTerm}&lat=${userLocation.lat}&lng=${userLocation.lng}`);
+    // const obj = await res.json();
+
+    const obj = {
+      eng: {
+        places: [
+       
+          {
+            name: "Science World",
+            desc: "A science center featuring exhibits, displays, and an OMNIMAX theater.",
+            address: "1455 Quebec St, Vancouver, BC V6A 3Z7",
+          },
+          {
+            name: "H.R. MacMillan Space Centre",
+            desc: "A space and science museum offering interactive exhibits.",
+            address: "1100 Chestnut St, Vancouver, BC V6J 3J9",
+          },
+        // ],
+        // events: [
+          {
+            name: "Science Lecture Series",
+            desc: "Weekly talks on current scientific research.",
+            address: "Science World, 1455 Quebec St, Vancouver, BC V6A 3Z7",
+            time: "Every Thursday at 7:00 PM",
+          },
+          {
+            name: "Astronomy Night",
+            desc: "Explore the stars with telescopes and expert guidance.",
+            address:
+              "H.R. MacMillan Space Centre, 1100 Chestnut St, Vancouver, BC V6J 3J9",
+            time: "Saturday, 9:00 PM",
+          },
+        ],
+      },
+      coords: {
+        places: [
+          { lat: 49.2765, lng: -123.145 }, // Coordinates for H.R. MacMillan Space Centre
+          { lat: 49.2734, lng: -123.1034 }, // Coordinates for Science World
+        // ],
+        // events: [
+          { lat: 49.2734, lng: -123.1034 }, // Coordinates for Science World event
+          { lat: 49.2765, lng: -123.145 }, // Coordinates for H.R. MacMillan event
+        ],
+      },
+    };
+    setTimeout(function () {
+      setSearch_obj(obj);
+      setSearchResults(obj);
+      setIsLoading(false);
+      
+      console.log(obj);
+    }, 1000)
+
+
+  }
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
@@ -120,17 +164,20 @@ export default function Home() {
       <div className="absolute inset-0 z-0" id="map">
         <MapNoSSR />
       </div>
-
       {/* Left Sidebar (appears after searching) */}
       {hasSearched && (
         <aside
           id="sidebar"
           className="absolute top-5 left-5 h-[calc(100%-2.5rem)] w-72 bg-white border border-gray-200 z-10 rounded-lg shadow-md no-scrollbar overflow-hidden"
         >
-          <Sidebar closeSidebar={() => setHasSearched(false)} search_obj={search_obj.eng} coords={search_obj.coords} isLoading={isLoading} />
+          <Sidebar
+            closeSidebar={() => setHasSearched(false)}
+            search_obj={search_obj.eng}
+            coords={search_obj.coords}
+            isLoading={isLoading}
+          />
         </aside>
       )}
-
       {/* Right Sidebar (appears when a location is selected) */}
       {selectedResult && (
         <aside
@@ -140,7 +187,6 @@ export default function Home() {
           <RouteDetailsSidebar />
         </aside>
       )}
-
       {/* Search Bar at the top center */}
       <div className="absolute top-10 w-full flex flex-col items-center z-10">
         <div
@@ -195,6 +241,7 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <RouteDetailsSidebar />    </main>
+      <RouteDetailsSidebar />{" "}
+    </main>
   );
 }
